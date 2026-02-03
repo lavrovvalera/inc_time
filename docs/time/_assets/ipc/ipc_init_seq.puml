@@ -1,0 +1,49 @@
+@startuml ipc_init_seq_diagram
+
+title IPC Machine: Initialization
+
+hide footbox
+
+autonumber "<font color=red><b>[00]"
+autoactivate on
+
+legend top left
+    |= Color        |= Description                  |
+    |<#LightCyan>   | TimeDaemon members            |
+    |<#LightPink>   | IPC components                |
+    |<#WhiteSmoke>  | Shared Memory                 |
+    |<#LightSalmon> | Client Application            |
+    |<#LightGreen>  | Middleware components         |
+endlegend
+
+box VehicleTimeDaemon #LightYellow
+    participant "Application" as app #LightCyan
+    participant "MessageBroker" as broker #LightCyan
+    participant "IPCMachine:publisher" as ipc_publisher #LightPink
+end box
+
+participant "shmem" as shared_memory #WhiteSmoke
+
+box Application #e6ffe6
+    participant "IPCMachine:receiver" as ipc_receiver #LightPink
+    participant "mw::time::svt" as mw #LightGreen
+    participant "Business logic" as client_app #LightSalmon
+end box
+
+app -> ipc_publisher: create()
+ipc_publisher -> shared_memory**: create
+shared_memory --> ipc_publisher: success
+ipc_publisher --> app : ipc_publisher object
+app -> broker : subscribe("verified_ptp_data", ipc_publisher::onNewData)
+broker --> app
+
+client_app -> mw: create()
+mw -> ipc_receiver: create()
+loop while try_open returns false
+    ipc_receiver -> shared_memory: try_open()
+    shared_memory --> ipc_receiver: success or fail
+end
+ipc_receiver --> mw
+mw --> client_app
+
+@enduml
