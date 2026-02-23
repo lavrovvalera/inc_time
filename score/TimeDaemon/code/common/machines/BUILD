@@ -1,0 +1,48 @@
+load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
+load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
+
+cc_library(
+    name = "machines",
+    srcs = [
+        "base_machine.cpp",
+        "event_driven_machine.cpp",
+        "periodic_machine.cpp",
+    ],
+    hdrs = [
+        "base_machine.h",
+        "event_driven_machine.h",
+        "periodic_machine.h",
+        "proactive_machine.h",
+        "reactive_machine.h",
+    ],
+    features = COMPILER_WARNING_FEATURES,
+    tags = ["QM"],
+    visibility = ["//score/TimeDaemon:__subpackages__"],
+    deps = [
+        "//score/TimeDaemon/code/common:logging_contexts",
+        "@score_baselibs//score/concurrency",
+    ],
+)
+
+cc_unit_test_suites_for_host_and_qnx(
+    name = "unit_test_suite",
+    cc_unit_tests = [
+        ":machines_test",
+    ],
+    visibility = ["//score/TimeDaemon:__pkg__"],
+)
+
+cc_test(
+    name = "machines_test",
+    srcs = [
+        "base_machine_test.cpp",
+        "event_driven_machine_test.cpp",
+        "periodic_machine_test.cpp",
+    ],
+    tags = ["unit"],
+    deps = [
+        ":machines",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
