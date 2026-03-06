@@ -36,6 +36,7 @@ cc_test(
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/ipc/svt/publisher:factory",
         "//score/TimeDaemon/code/ipc/svt/receiver:factory",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

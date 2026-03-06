@@ -14,7 +14,8 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common/data_flow",
         "//score/TimeDaemon/code/common/machines",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/language/futurecpp",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -35,6 +36,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":verification_machine",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

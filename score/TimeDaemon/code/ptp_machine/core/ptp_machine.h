@@ -54,7 +54,7 @@ class PTPMachine final : public PeriodicMachine, public Producer<PtpTimeInfo>
           engine_impl_(std::make_unique<PTPEngine>(std::forward<PTPEngineArgs>(args)...)),
           is_initialized_(false)
     {
-        score::log::LogInfo(kPtpMachineContext)
+        score::mw::log::LogInfo(kPtpMachineContext)
             << "PTPMachine created with update interval: " << updateInterval.count() << "ms";
     }
 
@@ -138,11 +138,11 @@ bool PTPMachine<PTPEngine>::Init()
 
         if (is_initialized_)
         {
-            score::log::LogInfo(kPtpMachineContext) << "QPTP stack initialized successfully";
+            score::mw::log::LogInfo(kPtpMachineContext) << "QPTP stack initialized successfully";
         }
         else
         {
-            score::log::LogError(kPtpMachineContext) << "QPTP stack initialization failed";
+            score::mw::log::LogError(kPtpMachineContext) << "QPTP stack initialization failed";
         }
     }
 
@@ -164,7 +164,7 @@ void PTPMachine<PTPEngine>::PeriodicTask() noexcept
 {
     if (!is_initialized_)
     {
-        score::log::LogFatal(kPtpMachineContext) << "PTP stack not initialized, abort periodic task";
+        score::mw::log::LogFatal(kPtpMachineContext) << "PTP stack not initialized, abort periodic task";
         return;
     }
 
@@ -177,7 +177,7 @@ void PTPMachine<PTPEngine>::PeriodicTask() noexcept
     }
     else
     {
-        score::log::LogWarn(kPtpMachineContext) << "Failed to retrieve time data from PTP stack";
+        score::mw::log::LogWarn(kPtpMachineContext) << "Failed to retrieve time data from PTP stack";
     }
 }
 
@@ -186,7 +186,7 @@ void PTPMachine<PTPEngine>::Publish(const PtpTimeInfo& data)
 {
     if (publish_callback_)
     {
-        score::log::LogDebug(kPtpMachineContext) << "Publishing PTP data";
+        score::mw::log::LogDebug(kPtpMachineContext) << "Publishing PTP data";
         publish_callback_(data);
     }
 }

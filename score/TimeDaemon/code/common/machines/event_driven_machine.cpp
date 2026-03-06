@@ -25,7 +25,7 @@ EventDrivenMachine::EventDrivenMachine(const std::string& name, const std::chron
 void EventDrivenMachine::Start() noexcept
 {
     const auto thread_name = "td_" + GetName() + "_worker";
-    worker_ = amp::jthread{amp::jthread::name_hint{thread_name}, [this](const amp::stop_token token) noexcept {
+    worker_ = score::cpp::jthread{score::cpp::jthread::name_hint{thread_name}, [this](const score::cpp::stop_token token) noexcept {
                                WorkerFunction(token);
                            }};
 }
@@ -36,7 +36,7 @@ void EventDrivenMachine::Stop() noexcept
     {
         {
             std::lock_guard<std::mutex> guard{cv_mutex_};
-            amp::ignore = worker_.request_stop();
+            score::cpp::ignore = worker_.request_stop();
             cv_.notify_one();
         }
 
@@ -51,7 +51,7 @@ void EventDrivenMachine::NotifyEvent() noexcept
     cv_.notify_one();
 }
 
-void EventDrivenMachine::WorkerFunction(const amp::stop_token& stop_token) noexcept
+void EventDrivenMachine::WorkerFunction(const score::cpp::stop_token& stop_token) noexcept
 {
     while (!stop_token.stop_requested())
     {

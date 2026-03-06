@@ -30,8 +30,8 @@ namespace clock_realtime
 {
 
 ///
-/// \brief Class to implement SynchronizedVehicleTime clock on qqvp. Currently this class
-/// is using high_precision_clock as source of data, as on qqvp Qgptp daemon is not available.
+/// \brief Class to implement SynchronizedVehicleTime clock as a stub implementation. Currently this class
+/// is using high_precision_clock as source of data.
 /// Timebase status will be always kSynchronized.
 ///
 
@@ -51,7 +51,7 @@ class ClockProvider final : public score::time::SynchronizedVehicleTime
     ///
     /// \details overrides score::time::SynchronizedVehicleTime::WaitUntilAvailable()
     ///
-    bool WaitUntilAvailable(const amp::stop_token& token,
+    bool WaitUntilAvailable(const score::cpp::stop_token& token,
                             const std::chrono::time_point<std::chrono::steady_clock> until) const override;
 
     /// \brief Method to check if timebase is available

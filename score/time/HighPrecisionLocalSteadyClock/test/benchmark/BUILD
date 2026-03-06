@@ -8,6 +8,6 @@ cc_binary(
     ],
     deps = [
         "//score/time/HighPrecisionLocalSteadyClock",
-        "@benchmark//:benchmark_main",
+        "@google_benchmark//:benchmark_main",
     ],
 )

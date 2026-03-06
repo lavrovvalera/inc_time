@@ -11,7 +11,7 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common:logging_contexts",
         "@score_baselibs//score/concurrency",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -28,8 +28,9 @@ cc_binary(
         "//score/TimeDaemon/code/application/svt:svt_handler",
         "//score/TimeDaemon/code/common:logging_contexts",
         "@score_baselibs//score/concurrency",
-        "@score_baselibs//score/mw/lifecycle:lifecycle_non_adaptive",
-        "@score_baselibs//score/mw/log",
+        "@score_lifecycle_health//src/lifecycle_client_lib",
+        # "@score_logging//score/mw/log",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 

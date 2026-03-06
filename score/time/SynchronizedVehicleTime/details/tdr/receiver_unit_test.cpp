@@ -160,10 +160,10 @@ TEST_F(TestReceiver, WaitUntilAvailableSucceeds)
     EXPECT_CALL(*vtd_ipc_receiver_mock, Init()).WillOnce(Return(true));
     // When its method WaitUntilAvailable() gets called with a timepoint in the future, then true must be returned
     const auto current_time = std::chrono::steady_clock::now();
-    EXPECT_TRUE(timebase.WaitUntilAvailable(amp::stop_source{}.get_token(), current_time + 3s));
+    EXPECT_TRUE(timebase.WaitUntilAvailable(score::cpp::stop_source{}.get_token(), current_time + 3s));
 
     // When its method WaitUntilAvailable() gets called again with a timepoint in the future, then true must be returned
-    EXPECT_TRUE(timebase.WaitUntilAvailable(amp::stop_source{}.get_token(), current_time + 7s));
+    EXPECT_TRUE(timebase.WaitUntilAvailable(score::cpp::stop_source{}.get_token(), current_time + 7s));
 }
 
 TEST_F(TestReceiver, IsAvailableSucceeds)

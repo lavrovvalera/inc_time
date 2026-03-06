@@ -14,7 +14,7 @@ endlegend
 
 class "TimeDaemon" as vtd_app #LightCyan {
     +std::int32_t Initialize(const ApplicationContext& context) override
-    +std::int32_t Run(amp::stop_token& token) override
+    +std::int32_t Run(score::cpp::stop_token& token) override
 }
 
 class "TimebaseHandler" as tb_handler #LightCyan{

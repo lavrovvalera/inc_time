@@ -25,7 +25,7 @@ JobRunner::JobRunner(std::vector<Job> jobs, const std::string name)
 {
 }
 
-void JobRunner::Start(const amp::stop_token& token)
+void JobRunner::Start(const score::cpp::stop_token& token)
 {
     if (status_ != Result::kIdle)
     {
@@ -33,14 +33,14 @@ void JobRunner::Start(const amp::stop_token& token)
     }
 
     {
-        // Set before amp::jthread as if we will set it after, worker_thread_
+        // Set before score::cpp::jthread as if we will set it after, worker_thread_
         // it could be already done.
         std::lock_guard<std::mutex> lock(status_mutex_);
         status_ = Result::kInProgress;
     }
 
     const auto thread_name = "td_" + name_ + "_worker";
-    worker_thread_ = amp::jthread(amp::jthread::name_hint{thread_name}, [this, &token]() {
+    worker_thread_ = score::cpp::jthread(score::cpp::jthread::name_hint{thread_name}, [this, &token]() {
         bool success = RunJobs(token);
         {
             std::lock_guard<std::mutex> lock(status_mutex_);
@@ -49,7 +49,7 @@ void JobRunner::Start(const amp::stop_token& token)
     });
 }
 
-bool JobRunner::RunJobs(const amp::stop_token& token)
+bool JobRunner::RunJobs(const score::cpp::stop_token& token)
 {
     bool all_success = true;
 
@@ -67,13 +67,13 @@ bool JobRunner::RunJobs(const amp::stop_token& token)
 
             if (elapsed >= it->timeout)
             {
-                score::log::LogError(kTimeBaseHandlerSvt) << it->name << " timed out";
+                score::mw::log::LogError(kTimeBaseHandlerSvt) << it->name << " timed out";
                 all_success = false;
                 it = jobs_.erase(it);
             }
             else if (it->fn())
             {
-                score::log::LogInfo(kTimeBaseHandlerSvt) << it->name << " initialized successfully";
+                score::mw::log::LogInfo(kTimeBaseHandlerSvt) << it->name << " initialized successfully";
                 it = jobs_.erase(it);
             }
             else

@@ -42,7 +42,7 @@ cc_test(
         "@score_baselibs//score/os/qnx:neutrino_qnx_mock",
         "//score/time/HighPrecisionLocalSteadyClock:interface",
         "@googletest//:gtest",
-        "@googletest//:gtest:main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -58,7 +58,7 @@ cc_test(
     target_compatible_with = ["@platforms//os:qnx"],
     deps = [
         "@googletest//:gtest",
-        "@googletest//:gtest:main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -72,7 +72,7 @@ cc_test(
     deps = [
         ":qclock",
         "@googletest//:gtest",
-        "@googletest//:gtest:main",
+        "@googletest//:gtest_main",
     ],
 )
 

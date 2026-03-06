@@ -13,7 +13,6 @@
 #include "score/TimeDaemon/code/application/svt/svt_handler.h"
 #include "score/TimeDaemon/code/ipc/core/shared_memory_handler.h"
 #include "score/TimeDaemon/code/ipc/svt/receiver/factory.h"
-#include "score/TimeDaemon/code/ptp_machine/qgptp/details/mocks/libqgptp/qgptp_helper_mock.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -49,7 +48,7 @@ class SvtHandlerTest : public ::testing::Test
                        uint64_t expected_time,
                        int kRetryThreshold = 100)
     {
-        amp::stop_token stop_token{};
+        score::cpp::stop_token stop_token{};
         std::uint64_t obtained_time{0U};
         bool is_synchronized{false};
 

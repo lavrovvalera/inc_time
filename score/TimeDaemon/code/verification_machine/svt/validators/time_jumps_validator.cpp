@@ -75,7 +75,7 @@ bool TimeJumpsValidator::IsTimeJumpDetected(const PtpTimeInfo& data)
             {
                 is_time_jump_detected = true;
                 time_jump_state_ = TimeJumpState::kJumpToPast;
-                score::log::LogWarn(kVerificationMachineContext)
+                score::mw::log::LogWarn(kVerificationMachineContext)
                     << "TimeJumpsValidator: Time jump to past detected! Jump = " << current_jump_to_past << " ns";
             }
         }
@@ -88,7 +88,7 @@ bool TimeJumpsValidator::IsTimeJumpDetected(const PtpTimeInfo& data)
             {
                 is_time_jump_detected = true;
                 time_jump_state_ = TimeJumpState::kJumpToFuture;
-                score::log::LogWarn(kVerificationMachineContext)
+                score::mw::log::LogWarn(kVerificationMachineContext)
                     << "TimeJumpsValidator: Time jump to future detected! Jump = " << current_jump_to_future << " ns";
             }
         }
@@ -99,7 +99,7 @@ bool TimeJumpsValidator::IsTimeJumpDetected(const PtpTimeInfo& data)
     }
     else
     {
-        score::log::LogError(kVerificationMachineContext)
+        score::mw::log::LogError(kVerificationMachineContext)
             << "TimeJumpsValidator: Current Sync T2 is less than previous: [Current Sync: " << data.sync_fup_data
             << "], [Prv Sync: " << last_sync_frame_.value().sync_fup_data << "]";
     }
@@ -115,7 +115,7 @@ void TimeJumpsValidator::HandleIdleState(const PtpTimeInfo& data)
     }
     else
     {
-        score::log::LogDebug(kVerificationMachineContext)
+        score::mw::log::LogDebug(kVerificationMachineContext)
             << "TimeJumpsValidator: Waiting until status.is_synchronized becomes true. Remain in kIdle state";
     }
 }
@@ -179,14 +179,14 @@ void TimeJumpsValidator::GoToInitialSyncDebouncing()
     // Set debouncing timer, so we will calculate sync debouncing time from this point
     sync_debouncing_init_time_ = debouncing_clock_->Now().time_since_epoch();
     current_state_ = ProcessingStates::kInitialSyncDebouncing;
-    score::log::LogDebug(kVerificationMachineContext)
+    score::mw::log::LogDebug(kVerificationMachineContext)
         << "TimeJumpsValidator: Switch to kInitialSyncDebouncing state";
 }
 
 void TimeJumpsValidator::GoToTimeJumpHandling()
 {
     current_state_ = ProcessingStates::kTimeJumpHandling;
-    score::log::LogDebug(kVerificationMachineContext) << "TimeJumpsValidator: Switch to kTimeJumpHandling state";
+    score::mw::log::LogDebug(kVerificationMachineContext) << "TimeJumpsValidator: Switch to kTimeJumpHandling state";
 }
 
 }  // namespace td

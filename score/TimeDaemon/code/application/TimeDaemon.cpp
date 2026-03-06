@@ -11,13 +11,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 #include "score/TimeDaemon/code/application/TimeDaemon.h"
-
 #include "score/TimeDaemon/code/application/svt/factory.h"
-
 #include "score/TimeDaemon/code/common/logging_contexts.h"
 
 #include "score/mw/log/logging.h"
-
 #include "score/concurrency/interruptible_wait.h"
 
 namespace score
@@ -32,17 +29,17 @@ TimeDaemon::TimeDaemon() : score::mw::lifecycle::Application()
 
 std::int32_t TimeDaemon::Initialize(const score::mw::lifecycle::ApplicationContext&)
 {
-    score::log::LogInfo(kAppContext) << "TimeDaemon initializing...";
+    score::mw::log::LogInfo(kAppContext) << "TimeDaemon initializing...";
 
     svt_timebase_handler_->Initialize();
 
-    score::log::LogInfo(kAppContext) << "TimeDaemon initialized";
+    score::mw::log::LogInfo(kAppContext) << "TimeDaemon initialized";
     return EXIT_SUCCESS;
 }
 
-std::int32_t TimeDaemon::Run(const amp::stop_token& token)
+std::int32_t TimeDaemon::Run(const score::cpp::stop_token& token)
 {
-    score::log::LogInfo(kAppContext) << "Run() started";
+    score::mw::log::LogInfo(kAppContext) << "Run() started";
 
     while (!token.stop_requested())
     {
@@ -52,7 +49,7 @@ std::int32_t TimeDaemon::Run(const amp::stop_token& token)
 
     svt_timebase_handler_->Stop();
 
-    score::log::LogInfo(kAppContext) << "Run() finished";
+    score::mw::log::LogInfo(kAppContext) << "Run() finished";
     return EXIT_SUCCESS;
 }
 

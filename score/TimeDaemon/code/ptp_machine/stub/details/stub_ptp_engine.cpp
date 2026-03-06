@@ -35,19 +35,19 @@ std::uint16_t sequence_id_{0U};
 StubPTPEngine::StubPTPEngine(std::unique_ptr<PtpTimeInfo::ReferenceClock> local_clock) noexcept
     : local_clock_{std::move(local_clock)}
 {
-    score::mw::log::LogInfo(kQGPtpMachineContext) << "StubPTPEngine created!";
+    score::mw::log::LogInfo(kGPtpMachineContext) << "StubPTPEngine created!";
 }
 
 bool StubPTPEngine::Initialize() const
 {
-    score::mw::log::LogInfo(kQGPtpMachineContext) << "StubPTPEngine initialization succeeded!";
+    score::mw::log::LogInfo(kGPtpMachineContext) << "StubPTPEngine initialization succeeded!";
 
     return true;
 }
 
 bool StubPTPEngine::Deinitialize() const
 {
-    score::mw::log::LogInfo(kQGPtpMachineContext) << "StubPTPEngine deinitialization succeeded!";
+    score::mw::log::LogInfo(kGPtpMachineContext) << "StubPTPEngine deinitialization succeeded!";
     return true;
 }
 

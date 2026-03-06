@@ -35,7 +35,7 @@ void TimeoutValidator::DoValidation(PtpTimeInfo& data)
 
         // reset timeout flag
         data.status.is_timeout = false;
-        score::log::LogDebug(kVerificationMachineContext)
+        score::mw::log::LogDebug(kVerificationMachineContext)
             << "TimeoutValidator: New frame received, reset timeout flag";
     }
     else
@@ -44,7 +44,7 @@ void TimeoutValidator::DoValidation(PtpTimeInfo& data)
         const auto now = timeout_clock_->Now().time_since_epoch();
         const auto now_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(now);
         const auto reception_time_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(reception_time_);
-        score::log::LogDebug(kVerificationMachineContext)
+        score::mw::log::LogDebug(kVerificationMachineContext)
             << "TimeoutValidator: received old frame, checking timeout. Now:" << now_nano.count()
             << "ns, Reception time:" << reception_time_nano.count() << "ns";
         if (now_nano > reception_time_nano)
@@ -54,14 +54,14 @@ void TimeoutValidator::DoValidation(PtpTimeInfo& data)
             {
                 // Timeout occurred -> set timeout flag
                 data.status.is_timeout = true;
-                score::log::LogWarn(kVerificationMachineContext)
+                score::mw::log::LogWarn(kVerificationMachineContext)
                     << "TimeoutValidator: Timeout detected! [" << elapsed.count() << ", " << threshold_.count()
                     << "] ns";
             }
         }
         else
         {
-            score::log::LogError(kVerificationMachineContext)
+            score::mw::log::LogError(kVerificationMachineContext)
                 << "TimeoutValidator: Current time is less than reception time! [Now:" << now_nano.count()
                 << "ns, Reception time:" << reception_time_nano.count() << "ns]";
         }

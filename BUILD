@@ -20,15 +20,24 @@ setup_starpls(
     visibility = ["//visibility:public"],
 )
 
+docs(
+    data = [
+        "@score_process//:needs_json",
+    ],
+    source_dir = "docs",
+)
+
 copyright_checker(
     name = "copyright",
     srcs = [
-        "src",
-        "tests",
+        ".github",
+        "docs",
+        "score",
         "//:BUILD",
         "//:MODULE.bazel",
     ],
     config = "@score_tooling//cr_checker/resources:config",
+    exclusion = "//:cr_checker_exclusion",
     template = "@score_tooling//cr_checker/resources:templates",
     visibility = ["//visibility:public"],
 )
@@ -42,7 +51,3 @@ dash_license_checker(
 
 # Add target for formatting checks
 use_format_targets()
-
-docs(
-    source_dir = "docs",
-)

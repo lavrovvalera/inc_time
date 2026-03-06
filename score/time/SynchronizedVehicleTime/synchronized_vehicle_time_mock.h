@@ -37,7 +37,7 @@ class SynchronizedVehicleTimeMock : public SynchronizedVehicleTime
 
     MOCK_METHOD(bool,
                 WaitUntilAvailable,
-                (const amp::stop_token& token, const std::chrono::time_point<std::chrono::steady_clock> until),
+                (const score::cpp::stop_token& token, const std::chrono::time_point<std::chrono::steady_clock> until),
                 (const, override));
 
     MOCK_METHOD(bool, IsAvailable, (), (const, override));

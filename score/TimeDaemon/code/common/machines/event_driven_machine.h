@@ -96,11 +96,11 @@ class EventDrivenMachine : public ProactiveMachine
     virtual void OnTimeout() noexcept = 0;
 
   private:
-    void WorkerFunction(const amp::stop_token& stop_token) noexcept;
+    void WorkerFunction(const score::cpp::stop_token& stop_token) noexcept;
 
     std::mutex cv_mutex_;
     score::concurrency::InterruptibleConditionalVariable cv_;
-    amp::jthread worker_;
+    score::cpp::jthread worker_;
 
     const std::chrono::milliseconds kTimeout_;
     bool event_pending_;

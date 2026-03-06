@@ -26,10 +26,10 @@ namespace details
 {
 
 /**
- * @brief Engine class for interfacing with the libqgptp client to manage and retrieve PTP (Precision Time Protocol)
+ * @brief Engine class for interfacing with the libgptp client to manage and retrieve PTP (Precision Time Protocol)
  * data.
  *
- * The StubPTPEngine class encapsulates the logic for initializing, deinitializing, and interacting with the libqgptp
+ * The StubPTPEngine class encapsulates the logic for initializing, deinitializing, and interacting with the libgptp
  * client. It provides methods to read PTP snapshots, current time values, timebase status, rate deviation, and
  * measurement data related to PDelay and Sync messages. The class also allows querying the time taken to perform a PTP
  * reading.
@@ -44,37 +44,37 @@ class StubPTPEngine final
     StubPTPEngine(const StubPTPEngine&) noexcept = delete;
     StubPTPEngine(StubPTPEngine&&) noexcept = delete;
 
-    /// \brief Method to initialize libqgptp client
+    /// \brief Method to initialize libgptp client
     ///
     /// \return true - initialize success, otherwise false
     ///
     bool Initialize() const;
 
-    /// \brief Method to deinitialize libqgptp client
+    /// \brief Method to deinitialize libgptp client
     ///
     /// \return true - deinitialize success, otherwise false
     ///
     bool Deinitialize() const;
 
-    /// \brief Method that reads PTP snapshot from libqgptp
+    /// \brief Method that reads PTP snapshot from libgptp
     /// \param info Reference to PtpTimeInfo structure to fill with data
     /// \return true - read success, otherwise false
     ///
     bool ReadPTPSnapshot(PtpTimeInfo& info);
 
-    /// \brief Method that calls Libqgptp and read current time, timebase status and rate deviation
+    /// \brief Method that calls Libgptp and read current time, timebase status and rate deviation
     ///
     /// \param time_info Reference to PtpTimeInfo structure to fill with data
     ///
     bool ReadTimeValueAndStatus(PtpTimeInfo& time_info) noexcept;
 
-    /// \brief Method that calls libqgptp and read last PDelay ptp data
+    /// \brief Method that calls libgptp and read last PDelay ptp data
     ///
     /// \param time_info Reference to PtpTimeInfo structure to fill with PDelay data
     ///
     bool ReadPDelayMeasurementData(PtpTimeInfo& time_info) const noexcept;
 
-    /// \brief Method that calls libqgptp and read last Sync ptp data
+    /// \brief Method that calls libgptp and read last Sync ptp data
     ///
     /// \param time_info Reference to PtpTimeInfo structure to fill with Sync data
     ///

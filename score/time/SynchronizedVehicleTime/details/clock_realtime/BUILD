@@ -20,7 +20,7 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
         ],
         deps = [
             "@score_baselibs//score/concurrency",
-            "@score_baselibs//score/mw/log",
+            "@score_baselibs//score/mw/log:frontend",
             "//score/time/SynchronizedVehicleTime:interfaces",
         ] + dependencies,
     )
@@ -52,6 +52,7 @@ cc_test(
     deps = [
         ":for_unit_testing",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -67,6 +68,7 @@ cc_test(
     deps = [
         ":for_unit_testing",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

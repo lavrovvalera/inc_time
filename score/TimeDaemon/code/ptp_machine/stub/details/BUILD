@@ -16,6 +16,6 @@ cc_library(
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/common:logging_contexts",
         "//score/time/HighPrecisionLocalSteadyClock:interface",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )

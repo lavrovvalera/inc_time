@@ -17,7 +17,7 @@ cc_library(
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/common/machines",
         "//score/TimeDaemon/code/control_flow_divider/core:control_flow_divider",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -38,6 +38,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":ptp_control_flow_divider",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -51,6 +52,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":ptp_control_flow_divider",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

@@ -21,7 +21,7 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
             "//score/TimeDaemon/code/common:logging_contexts",
             "//score/TimeDaemon/code/ptp_machine/core:ptp_machine",
             "//score/TimeDaemon/code/ptp_machine/stub/details:stub_ptp_engine",
-            "@score_baselibs//score/mw/log",
+            "@score_baselibs//score/mw/log:frontend",
         ] + deps,
     )
     for name, testonly, deps in [
@@ -60,6 +60,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":gptp_stub_machine_for_utests",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

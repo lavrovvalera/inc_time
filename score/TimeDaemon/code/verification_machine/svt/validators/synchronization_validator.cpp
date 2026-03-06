@@ -27,7 +27,7 @@ void SynchronizationValidator::DoValidation(PtpTimeInfo& data)
     if (is_synchronized_)
     {
         data.status.is_synchronized = true;
-        score::log::LogDebug(kVerificationMachineContext)
+        score::mw::log::LogDebug(kVerificationMachineContext)
             << "SynchronizationValidator: Set synchronized flag to true.";
         return;
     }
@@ -36,7 +36,7 @@ void SynchronizationValidator::DoValidation(PtpTimeInfo& data)
     if (data.status.is_synchronized)
     {
         is_synchronized_ = true;
-        score::log::LogInfo(kVerificationMachineContext) << "SynchronizationValidator: Synchronization achieved.";
+        score::mw::log::LogInfo(kVerificationMachineContext) << "SynchronizationValidator: Synchronization achieved.";
     }
 }
 

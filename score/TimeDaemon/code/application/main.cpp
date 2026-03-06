@@ -11,9 +11,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 #include "score/TimeDaemon/code/application/TimeDaemon.h"
-#include "score/lifecycle/runapplication.h"
+
+#include "src/lifecycle_client_lib/include/runapplication.h"
 
 int main(int argc, const char* argv[])
 {
-    return score::lifecycle::run_application<score::td::TimeDaemon>(argc, argv);
+    return score::mw::lifecycle::run_application<score::td::TimeDaemon>(argc, argv);
 }

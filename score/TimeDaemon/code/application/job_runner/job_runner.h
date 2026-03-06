@@ -69,7 +69,7 @@ class JobRunner
      *
      * @param token Stop token used to cancel execution.
      */
-    void Start(const amp::stop_token& token);
+    void Start(const score::cpp::stop_token& token);
 
     /**
      * @brief Reads the result of the running job
@@ -85,13 +85,13 @@ class JobRunner
      * @param token A stop token that can request early termination of job execution.
      * @return true if all jobs completed successfully; false if any job failed or timed out.
      */
-    bool RunJobs(const amp::stop_token& token);
+    bool RunJobs(const score::cpp::stop_token& token);
 
     std::vector<Job> jobs_;
     const std::string name_;
     Result status_;
     mutable std::mutex status_mutex_;
-    amp::jthread worker_thread_;
+    score::cpp::jthread worker_thread_;
 };
 
 }  // namespace td

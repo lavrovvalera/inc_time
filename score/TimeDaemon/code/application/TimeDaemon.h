@@ -15,7 +15,7 @@
 
 #include "score/TimeDaemon/code/application/timebase_handler.h"
 
-#include "score/lifecycle/application.h"
+#include "src/lifecycle_client_lib/include/application.h"
 
 namespace score
 {
@@ -34,7 +34,7 @@ class TimeDaemon final : public score::mw::lifecycle::Application
     TimeDaemon& operator=(const TimeDaemon&) & noexcept = delete;
 
     std::int32_t Initialize(const score::mw::lifecycle::ApplicationContext& context) override;
-    std::int32_t Run(const amp::stop_token& token) override;
+    std::int32_t Run(const score::cpp::stop_token& token) override;
 
   private:
     std::unique_ptr<TimebaseHandler> svt_timebase_handler_;

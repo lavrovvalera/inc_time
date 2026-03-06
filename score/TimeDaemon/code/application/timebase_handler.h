@@ -67,7 +67,7 @@ class TimebaseHandler
     /// Should be called periodically to invoke all poll based actions
     ///
     /// \param token Stop token used to request termination
-    virtual void RunOnce(const amp::stop_token& token) noexcept = 0;
+    virtual void RunOnce(const score::cpp::stop_token& token) noexcept = 0;
 
     /// \brief Stop the timebase handler
     ///

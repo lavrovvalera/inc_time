@@ -16,7 +16,7 @@
 #include "score/TimeDaemon/code/ipc/svt/publisher/factory.h"
 #include "score/TimeDaemon/code/msg_broker/subscription.h"
 #include "score/TimeDaemon/code/msg_broker/topic.h"
-#include "score/TimeDaemon/code/ptp_machine/qgptp/factory.h"
+#include "score/TimeDaemon/code/ptp_machine/stub/factory.h"
 #include "score/TimeDaemon/code/verification_machine/svt/factory.h"
 #include "score/concurrency/interruptible_wait.h"
 #include "score/mw/log/logging.h"
@@ -32,23 +32,23 @@ namespace td
 SvtHandler::SvtHandler() noexcept
     : job_runner_{nullptr},
       msg_broker_{nullptr},
-      qgptp_machine_{nullptr},
+      gptp_machine_{nullptr},
       verification_machine_{nullptr},
       ipc_publisher_{nullptr},
       ctrl_flow_divider_{nullptr},
       handler_status_{TimebaseHandler::Status::kIdle}
 {
     msg_broker_ = std::make_shared<MessageBroker<PtpTimeInfo>>();
-    qgptp_machine_ = CreateQGPTPMachine("libqgptp_worker");
+    gptp_machine_ = CreateGPTPStubMachine("ptp_worker");
     verification_machine_ = CreateSvtVerificationMachine("time_verification_worker");
     ipc_publisher_ = CreateSvtPublisher("svt_ipc_publisher");
     ctrl_flow_divider_ = CreatePtpControlFlowDivider("ptp_control_flow_divider", std::chrono::milliseconds{250});
 
     std::vector<Job> jobs = {
         {[this] {
-             return qgptp_machine_->Init();
+             return gptp_machine_->Init();
          },
-         qgptp_machine_->GetName(),
+         gptp_machine_->GetName(),
          std::chrono::seconds(20)},
         {[this] {
              return verification_machine_->Init();
@@ -68,7 +68,7 @@ SvtHandler::SvtHandler() noexcept
     };
     job_runner_ = std::make_unique<JobRunner>(std::move(jobs), "svt_init");
 
-    score::log::LogInfo(kTimeBaseHandlerSvt) << "Handler created!";
+    score::mw::log::LogInfo(kTimeBaseHandlerSvt) << "Handler created!";
 }
 
 void SvtHandler::Initialize() noexcept
@@ -81,14 +81,14 @@ void SvtHandler::Initialize() noexcept
     msg_broker_->AddSubscriber(raw_ptp_data_topic, verification_machine_);
     msg_broker_->AddSubscriber(validated_ptp_data_topic, ipc_publisher_);
 
-    msg_broker_->AddProducer(input_ptp_data_topic, qgptp_machine_);
+    msg_broker_->AddProducer(input_ptp_data_topic, gptp_machine_);
     msg_broker_->AddProducer(raw_ptp_data_topic, ctrl_flow_divider_);
     msg_broker_->AddProducer(validated_ptp_data_topic, verification_machine_);
 
-    score::log::LogInfo(kTimeBaseHandlerSvt) << "Msg broker initialized!";
+    score::mw::log::LogInfo(kTimeBaseHandlerSvt) << "Msg broker initialized!";
 }
 
-void SvtHandler::RunOnce(const amp::stop_token& token) noexcept
+void SvtHandler::RunOnce(const score::cpp::stop_token& token) noexcept
 {
     switch (handler_status_)
     {
@@ -96,7 +96,7 @@ void SvtHandler::RunOnce(const amp::stop_token& token) noexcept
         {
             job_runner_->Start(token);
             handler_status_ = TimebaseHandler::Status::kInitialize;
-            score::log::LogInfo(kTimeBaseHandlerSvt) << "Initialization started";
+            score::mw::log::LogInfo(kTimeBaseHandlerSvt) << "Initialization started";
             break;
         }
         case TimebaseHandler::Status::kInitialize:
@@ -106,20 +106,20 @@ void SvtHandler::RunOnce(const amp::stop_token& token) noexcept
             {
                 case JobRunner::Result::kSucceed:
                 {
-                    score::log::LogInfo(kTimeBaseHandlerSvt)
+                    score::mw::log::LogInfo(kTimeBaseHandlerSvt)
                         << "Initialization done, starting proactive machines!";
                     job_runner_.reset();
-                    // start flow divider before qgptp, as qgptp might already try to publish some data
+                    // start flow divider before ptp, as ptp might already try to publish some data
                     ctrl_flow_divider_->Start();
-                    qgptp_machine_->Start();
+                    gptp_machine_->Start();
                     handler_status_ = TimebaseHandler::Status::kWorking;
-                    score::log::LogInfo(kTimeBaseHandlerSvt) << "Handler Is working";
+                    score::mw::log::LogInfo(kTimeBaseHandlerSvt) << "Handler Is working";
                     break;
                 }
                 case JobRunner::Result::kFailed:
                 {
                     handler_status_ = TimebaseHandler::Status::kFailed;
-                    score::log::LogError(kTimeBaseHandlerSvt) << "Initialization failed, handler not ready!!";
+                    score::mw::log::LogError(kTimeBaseHandlerSvt) << "Initialization failed, handler not ready!!";
                     break;
                 }
                 case JobRunner::Result::kIdle:
@@ -140,9 +140,9 @@ void SvtHandler::Stop() noexcept
 {
     if (handler_status_ == TimebaseHandler::Status::kWorking)
     {
-        qgptp_machine_->Stop();
+        gptp_machine_->Stop();
         ctrl_flow_divider_->Stop();
-        score::log::LogInfo(kTimeBaseHandlerSvt) << "Stopping proactive machines!";
+        score::mw::log::LogInfo(kTimeBaseHandlerSvt) << "Stopping proactive machines!";
     }
 }
 

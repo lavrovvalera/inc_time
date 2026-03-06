@@ -18,7 +18,7 @@
 #include "score/TimeDaemon/code/control_flow_divider/ptp/ptp_control_flow_divider.h"
 #include "score/TimeDaemon/code/ipc/svt/publisher/svt_publisher.h"
 #include "score/TimeDaemon/code/msg_broker/msg_broker.h"
-#include "score/TimeDaemon/code/ptp_machine/qgptp/qgptp_machine.h"
+#include "score/TimeDaemon/code/ptp_machine/stub/gptp_stub_machine.h"
 #include "score/TimeDaemon/code/verification_machine/svt/svt_verification_machine.h"
 
 #include <memory>
@@ -32,7 +32,7 @@ namespace td
 ///
 /// The SvtHandler class manages the initialization, execution, and stopping
 /// of a SVT (Synchronous Vehicle Time) timebase. It integrates with various
-/// subsystems like the QGPTP machine, verification machine, IPC publisher,
+/// subsystems like the GPTP machine, verification machine, IPC publisher,
 /// and control flow divider to provide a fully functional timebase handler.
 ///
 /// This class is non-copyable and non-movable to ensure proper resource
@@ -61,7 +61,7 @@ class SvtHandler : public TimebaseHandler
     /// operation is non blocking
     ///
     /// \param token Stop token used to safely terminate the run loop
-    virtual void RunOnce(const amp::stop_token& token) noexcept override;
+    virtual void RunOnce(const score::cpp::stop_token& token) noexcept override;
 
     /// \brief Stops the SVT timebase handler
     ///
@@ -72,7 +72,7 @@ class SvtHandler : public TimebaseHandler
   private:
     std::unique_ptr<JobRunner> job_runner_;                         ///< Manages periodic jobs and tasks
     std::shared_ptr<MessageBroker<PtpTimeInfo>> msg_broker_;        ///< Handles message communication
-    std::shared_ptr<QGPTPMachine> qgptp_machine_;                   ///< Manages QGPTP synchronization
+    std::shared_ptr<GPTPStubMachine> gptp_machine_;                 ///< Manages GPTP synchronization
     std::shared_ptr<SvtVerificationMachine> verification_machine_;  ///< Handles SVT verification
     std::shared_ptr<SvtPublisher> ipc_publisher_;                   ///< Publishes SVT data via IPC
     std::shared_ptr<PtpControlFlowDivider> ctrl_flow_divider_;      ///< Divides PTP control flow

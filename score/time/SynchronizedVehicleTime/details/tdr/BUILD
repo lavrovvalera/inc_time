@@ -21,7 +21,7 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
         ],
         deps = [
             "@score_baselibs//score/concurrency",
-            "@score_baselibs//score/mw/log",
+            "@score_baselibs//score/mw/log:frontend",
             "//score/time/SynchronizedVehicleTime:interfaces",
         ] + dependencies,
     )
@@ -65,6 +65,7 @@ cc_test(
     deps = [
         ":for_unit_testing",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -83,6 +84,7 @@ cc_test(
         #integration like test that uses real svt_publisher instead of mock receiver
         "//score/TimeDaemon/code/ipc:svt_publisher",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -98,6 +100,7 @@ cc_test(
     deps = [
         ":for_unit_testing",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

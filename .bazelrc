@@ -7,3 +7,5 @@ test --test_output=errors
 
 common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
 common --registry=https://bcr.bazel.build
+
+build --@score_baselibs//score/json:base_library=nlohmann

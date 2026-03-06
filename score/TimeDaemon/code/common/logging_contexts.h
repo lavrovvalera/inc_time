@@ -27,7 +27,7 @@ constexpr auto kMessageBrokerContext = "MSGB";
 
 // PTP Machine contexts
 constexpr auto kPtpMachineContext = "PTPM";
-constexpr auto kQGPtpMachineContext = "QGPM";
+constexpr auto kGPtpMachineContext = "GPTP";
 
 // IPC Handler context
 constexpr auto kIpcHandlerContext = "IPCH";

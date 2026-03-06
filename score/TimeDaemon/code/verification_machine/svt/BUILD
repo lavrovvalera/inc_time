@@ -18,7 +18,7 @@ cc_library(
         "//score/TimeDaemon/code/common/machines",
         "//score/TimeDaemon/code/verification_machine/core:verification_machine",
         "//score/TimeDaemon/code/verification_machine/svt/validators",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -39,6 +39,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":svt_verification_machine",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

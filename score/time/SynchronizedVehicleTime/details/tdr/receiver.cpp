@@ -73,7 +73,7 @@ Receiver::Receiver(std::unique_ptr<HighPrecisionLocalSteadyClock> high_precision
 {
 }
 
-bool Receiver::WaitUntilAvailable(const amp::stop_token& token,
+bool Receiver::WaitUntilAvailable(const score::cpp::stop_token& token,
                                   const std::chrono::time_point<std::chrono::steady_clock> until) const
 {
     bool should_run = false;
@@ -87,7 +87,7 @@ bool Receiver::WaitUntilAvailable(const amp::stop_token& token,
         should_run = (not token.stop_requested()) && (std::chrono::steady_clock::now() <= until);
     } while (should_run);
 
-    score::log::LogError(kSvtMainLogContext) << "The ipc to TimeDaemon could not be initialized!";
+    score::mw::log::LogError(kSvtMainLogContext) << "The ipc to TimeDaemon could not be initialized!";
     return false;
 }
 
@@ -134,7 +134,7 @@ SynchronizedVehicleTime::TimeStatus Receiver::Now() noexcept
             }
             else
             {
-                score::log::LogError(kSvtMainLogContext)
+                score::mw::log::LogError(kSvtMainLogContext)
                     << "The received local time is higher than current time! Returning Unknown status";
             }
         }

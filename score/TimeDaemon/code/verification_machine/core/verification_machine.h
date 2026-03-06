@@ -20,8 +20,6 @@
 #include "score/TimeDaemon/code/verification_machine/core/verification_stage.h"
 #include "score/mw/log/logging.h"
 
-#include "amp_utility.hpp"
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -145,19 +143,19 @@ void VerificationMachine<DataType>::Publish(const DataType& data)
 {
     if (publish_callback_)
     {
-        score::log::LogDebug(kVerificationMachineContext) << "Publishing data " << data;
+        score::mw::log::LogDebug(kVerificationMachineContext) << "Publishing data " << data;
         publish_callback_(data);
     }
     else
     {
-        score::log::LogWarn(kVerificationMachineContext) << "Publish callback not set, cannot publish data";
+        score::mw::log::LogWarn(kVerificationMachineContext) << "Publish callback not set, cannot publish data";
     }
 }
 
 template <typename DataType>
 void VerificationMachine<DataType>::OnMessage(DataType data)
 {
-    score::log::LogDebug(kVerificationMachineContext) << "Receive new data " << data;
+    score::mw::log::LogDebug(kVerificationMachineContext) << "Receive new data " << data;
     auto processed = ProcessMessage(std::move(data));
     Publish(processed);
 }
@@ -171,14 +169,14 @@ bool VerificationMachine<DataType>::Init()
 template <typename DataType>
 auto VerificationMachine<DataType>::ProcessMessage(DataType data) -> DataType
 {
-    AMP_ASSERT_PRD_MESSAGE(pipeline_ != nullptr, "ProcessMessage shall only be called when pipeline is setup");
+    SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE(pipeline_ != nullptr, "ProcessMessage shall only be called when pipeline is setup");
     return pipeline_->Process(std::move(data));
 }
 
 template <typename DataType>
 void VerificationMachine<DataType>::SetupPipeline(const std::vector<StageFactory>& factories)
 {
-    AMP_ASSERT_PRD_MESSAGE(!factories.empty(), "SetupPipeline shall be called with provided stage factories");
+    SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE(!factories.empty(), "SetupPipeline shall be called with provided stage factories");
 
     std::vector<StagePtr> stages;
     stages.reserve(factories.size());
@@ -187,7 +185,7 @@ void VerificationMachine<DataType>::SetupPipeline(const std::vector<StageFactory
     for (const auto& factory : factories)
     {
         auto stage = factory();
-        AMP_ASSERT_PRD_MESSAGE(stage != nullptr, "Validator factory returned nullptr");
+        SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE(stage != nullptr, "Validator factory returned nullptr");
         stages.push_back(std::move(stage));
     }
 

@@ -17,7 +17,7 @@
 
 #include "score/time/common/time_base_status.h"
 
-#include <amp_callback.hpp>
+#include <score/callback.hpp>
 #include <score/stop_token.hpp>
 
 #include <chrono>
@@ -61,9 +61,9 @@ class SynchronizedVehicleTime
 
     constexpr static std::uint64_t kCallbackCapacity{64U};
     using TimeSlaveSyncDataReceivedCallback =
-        amp::callback<void(const TimeSlaveSyncData<SynchronizedVehicleTime>&), kCallbackCapacity>;
+        score::cpp::callback<void(const TimeSlaveSyncData<SynchronizedVehicleTime>&), kCallbackCapacity>;
     using PDelayMeasurementFinishedCallback =
-        amp::callback<void(const PDelayMeasurementData<SynchronizedVehicleTime>&), kCallbackCapacity>;
+        score::cpp::callback<void(const PDelayMeasurementData<SynchronizedVehicleTime>&), kCallbackCapacity>;
 
     constexpr SynchronizedVehicleTime() noexcept = default;
     SynchronizedVehicleTime& operator=(const SynchronizedVehicleTime&) & noexcept = delete;
@@ -152,7 +152,7 @@ class SynchronizedVehicleTime
     ///
     /// \return true in case the SynchronizedVehicleTime's resource is available, false otherwise
     ///
-    virtual bool WaitUntilAvailable(const amp::stop_token& token,
+    virtual bool WaitUntilAvailable(const score::cpp::stop_token& token,
                                     const std::chrono::time_point<std::chrono::steady_clock> until) const = 0;
 
     /// \brief Method for setting the callback to be invoked upon retrieval of new time sync data for this timebase.

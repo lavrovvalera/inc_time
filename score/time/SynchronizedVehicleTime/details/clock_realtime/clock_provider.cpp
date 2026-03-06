@@ -30,7 +30,7 @@ ClockProvider::ClockProvider(std::unique_ptr<HighPrecisionLocalSteadyClock> high
 {
 }
 
-bool ClockProvider::WaitUntilAvailable(const amp::stop_token& /* token */,
+bool ClockProvider::WaitUntilAvailable(const score::cpp::stop_token& /* token */,
                                        const std::chrono::time_point<std::chrono::steady_clock> /* until */) const
 {
     return true;

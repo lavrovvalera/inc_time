@@ -9,6 +9,7 @@ cc_library(
     tags = ["FFI"],
     visibility = ["//score/time:__subpackages__"],
     deps = [
+        "@score_baselibs//score/language/futurecpp",
     ],
 )
 
@@ -22,6 +23,6 @@ cc_test(
     deps = [
         ":time_base_status",
         "@googletest//:gtest",
-        "@googletest//:gtest:main",
+        "@googletest//:gtest_main",
     ],
 )

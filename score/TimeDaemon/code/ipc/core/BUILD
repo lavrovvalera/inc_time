@@ -12,7 +12,7 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common:logging_contexts",
         "@score_baselibs//score/memory/shared",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -66,6 +66,7 @@ cc_test(
     deps = [
         ":publisher_impl",
         "//score/TimeDaemon/code/ipc:data_converter",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -81,6 +82,7 @@ cc_test(
     deps = [
         ":receiver_impl",
         "//score/TimeDaemon/code/ipc:data_converter",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -97,6 +99,7 @@ cc_test(
         ":shared_memory_handler",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/ipc:data_converter",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

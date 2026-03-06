@@ -30,7 +30,7 @@ cc_test(
     deps = [
         "//score/time/HighPrecisionLocalSteadyClock:interface",
         "@googletest//:gtest",
-        "@googletest//:gtest:main",
+        "@googletest//:gtest_main",
     ],
 )
 

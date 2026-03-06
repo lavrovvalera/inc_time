@@ -29,8 +29,8 @@ namespace td
 class JobRunnerTest : public ::testing::Test
 {
   protected:
-    amp::stop_source stop_source;
-    amp::stop_token token = stop_source.get_token();
+    score::cpp::stop_source stop_source;
+    score::cpp::stop_token token = stop_source.get_token();
 
     /**
      * @brief Wait until JobRunner finishes or timeout occurs.

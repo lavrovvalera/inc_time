@@ -14,9 +14,9 @@
 #define SCORE_TIMEDAEMON_CODE_MSG_BROKER_SHARED_DATA_H
 
 #include "score/TimeDaemon/code/common/logging_contexts.h"
-#include "score/lib/memory/shared/managed_memory_resource.h"
-#include "score/lib/memory/shared/shared_memory_factory.h"
-#include "score/lib/memory/shared/shared_memory_resource.h"
+#include "score/memory/shared/managed_memory_resource.h"
+#include "score/memory/shared/shared_memory_factory.h"
+#include "score/memory/shared/shared_memory_resource.h"
 
 #include <atomic>
 #include <cstdint>
@@ -114,7 +114,7 @@ bool SharedMemoryHandler<DataType>::Init()
 
         if (shared_memory_resource_ == nullptr)
         {
-            score::log::LogFatal(kIpcHandlerContext)
+            score::mw::log::LogFatal(kIpcHandlerContext)
                 << "shared memory segment could not be created for path " << shared_memory_path_;
         }
     }
@@ -126,7 +126,7 @@ bool SharedMemoryHandler<DataType>::Init()
         // but clients only know, what is stored there. Also see the score::memory::shared::ManagedMemoryResource
         // design for details.
         shared_memory_data_ = static_cast<SharedData*>(shared_memory_resource_->getUsableBaseAddress());
-        score::log::LogInfo(kIpcHandlerContext)
+        score::mw::log::LogInfo(kIpcHandlerContext)
             << "Shared memory object was found. Mapped data in it: " << shared_memory_data_;
     }
 
@@ -158,7 +158,7 @@ std::optional<DataType> SharedMemoryHandler<DataType>::Receive() const
             }
         }
 
-        score::log::LogError(kIpcHandlerContext)
+        score::mw::log::LogError(kIpcHandlerContext)
             << "Read failed for number of retries: " << max_number_of_read_retries_;
     }
 

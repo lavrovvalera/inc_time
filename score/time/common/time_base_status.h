@@ -13,9 +13,10 @@
 #ifndef SCORE_TIME_COMMON_TIME_BASE_STATUS_H
 #define SCORE_TIME_COMMON_TIME_BASE_STATUS_H
 
-#include <amp_assert.hpp>
-
 #include <sstream>
+#include <cstdint>
+
+#include <score/assert.hpp>
 
 namespace score
 {
@@ -73,7 +74,7 @@ class TimeBaseStatus final
     {
         const StatusFlagT flag_position{static_cast<StatusFlagT>(flag)};
 
-        AMP_ASSERT_PRD_MESSAGE((flag_position < (sizeof(StatusFlagT) * 8U)),
+        SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE((flag_position < (sizeof(StatusFlagT) * 8U)),
                                "mw::time: IsFlagActive() argument 'flag' exceeds possible size of status_flags_ type");
 
         return static_cast<bool>(status_flags_ & (static_cast<StatusFlagT>(1U << flag_position)));
@@ -166,7 +167,7 @@ class TimeBaseStatus final
     static inline void AddStatusFlagTo(StatusFlagT& status_container, const FlagEnumT flag) noexcept
     {
         const StatusFlagT flag_position{static_cast<StatusFlagT>(flag)};
-        AMP_ASSERT_PRD_MESSAGE((flag_position < (sizeof(status_container) * 8U)),
+        SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE((flag_position < (sizeof(status_container) * 8U)),
                                "mw::time: AddStatusFlagTo() argument 'flag' exceeds possible size of used "
                                "'StatusFlagT& status_container'");
 

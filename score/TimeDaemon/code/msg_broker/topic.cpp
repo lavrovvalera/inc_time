@@ -23,7 +23,7 @@ Topic::Topic(const std::string& name) noexcept
 {
     if (name.size() > kMaxLength)
     {
-        score::log::LogWarn() << name << " is to long, reducing to: " << kMaxLength << " max length";
+        score::mw::log::LogWarn() << name << " is to long, reducing to: " << kMaxLength << " max length";
         name_ = name.substr(0U, kMaxLength);
     }
     else

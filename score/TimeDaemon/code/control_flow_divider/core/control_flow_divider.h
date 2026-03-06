@@ -20,7 +20,7 @@
 
 #include "score/mw/log/logging.h"
 
-#include <amp_circular_buffer.hpp>
+#include <score/circular_buffer.hpp>
 
 #include <chrono>
 #include <functional>
@@ -105,7 +105,7 @@ class ControlFlowDivider final : public EventDrivenMachine, public Consumer<Data
     void Publish(const DataType& data) override;
 
     std::mutex data_buffer_mutex_;
-    amp::circular_buffer<DataType, BufferSize> data_buffer_;
+    score::cpp::circular_buffer<DataType, BufferSize> data_buffer_;
 
     /** @brief Callback function for publishing data */
     std::function<void(const DataType&)> publish_callback_;
@@ -123,7 +123,7 @@ ControlFlowDivider<DataType, BufferSize>::ControlFlowDivider(const std::string& 
       publish_callback_{nullptr},
       last_data_{}
 {
-    score::log::LogInfo(kControlFlowDividerContext)
+    score::mw::log::LogInfo(kControlFlowDividerContext)
         << "ControlFlowDivider created with timeout: " << timeout.count() << "ms";
 }
 
@@ -137,17 +137,17 @@ template <typename DataType, size_t BufferSize>
 void ControlFlowDivider<DataType, BufferSize>::SetPublishCallback(std::function<void(const DataType&)> callback)
 {
     publish_callback_ = std::move(callback);
-    score::log::LogDebug(kControlFlowDividerContext) << "Publish callback registered";
+    score::mw::log::LogDebug(kControlFlowDividerContext) << "Publish callback registered";
 }
 
 template <typename DataType, size_t BufferSize>
 void ControlFlowDivider<DataType, BufferSize>::OnMessage(DataType data)
 {
-    score::log::LogVerbose(kControlFlowDividerContext) << "New Data: " << data;
+    score::mw::log::LogVerbose(kControlFlowDividerContext) << "New Data: " << data;
     {
         std::lock_guard<std::mutex> lock(data_buffer_mutex_);
         data_buffer_.push_back(data);
-        score::log::LogDebug(kControlFlowDividerContext) << "New Data queued, queue size: " << data_buffer_.size();
+        score::mw::log::LogDebug(kControlFlowDividerContext) << "New Data queued, queue size: " << data_buffer_.size();
     }
 
     this->NotifyEvent();
@@ -185,7 +185,7 @@ void ControlFlowDivider<DataType, BufferSize>::OnEvent() noexcept
 template <typename DataType, size_t BufferSize>
 void ControlFlowDivider<DataType, BufferSize>::OnTimeout() noexcept
 {
-    score::log::LogWarn(kControlFlowDividerContext) << "Timeout expired, publishing last data";
+    score::mw::log::LogWarn(kControlFlowDividerContext) << "Timeout expired, publishing last data";
 
     this->Publish(last_data_);
 }
@@ -195,12 +195,12 @@ void ControlFlowDivider<DataType, BufferSize>::Publish(const DataType& data)
 {
     if (publish_callback_)
     {
-        score::log::LogVerbose(kControlFlowDividerContext) << "Publish data: " << data;
+        score::mw::log::LogVerbose(kControlFlowDividerContext) << "Publish data: " << data;
         publish_callback_(data);
     }
     else
     {
-        score::log::LogError(kControlFlowDividerContext) << "No publish callback registered, data discarded";
+        score::mw::log::LogError(kControlFlowDividerContext) << "No publish callback registered, data discarded";
     }
 }
 

@@ -15,7 +15,7 @@ cc_library(
         "//score/TimeDaemon/code/common/data_flow",
         "//score/TimeDaemon/code/common/machines",
         "//score/time/HighPrecisionLocalSteadyClock",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -39,6 +39,7 @@ cc_test(
     deps = [
         ":ptp_machine",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

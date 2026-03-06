@@ -12,7 +12,7 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common:logging_contexts",
         "@score_baselibs//score/concurrency",
-        "@score_baselibs//score/mw/log",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -32,6 +32,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":job_runner",
+        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

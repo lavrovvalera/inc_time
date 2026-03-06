@@ -11,13 +11,6 @@ cc_library(
     ],
 )
 
-exports_files(
-    [
-        "factory_shm_impl.h",
-    ],
-    visibility = ["//score/time/SynchronizedVehicleTime:__subpackages__"],
-)
-
 filegroup(
     name = "logging_contexts",
     srcs =
@@ -86,8 +79,6 @@ cc_unit_test_suites_for_host_and_qnx(
     ],
     test_suites_from_sub_packages = [
         "//score/time/SynchronizedVehicleTime/details/tdr:unit_test_suite",
-        "//score/time/SynchronizedVehicleTime/details/qgptp:unit_test_suite",
-        "//score/time/SynchronizedVehicleTime/details/shm:unit_test_suite",
     ],
     visibility = ["//score/time/SynchronizedVehicleTime:__pkg__"],
 )
