@@ -59,19 +59,25 @@ use_repo(
     "score_qcc_x86_64_toolchain",
 )
 
-bazel_dep(name = "googletest", version = "1.17.0.bcr.2")
-bazel_dep(name = "google_benchmark", version = "1.9.5")
-bazel_dep(name = "download_utils", version = "1.2.2")
-bazel_dep(name = "rules_cc", version = "0.2.16")
-
 ## Custom Module Loading
 
-bazel_dep(name = "score_docs_as_code", version = "3.0.0")
-bazel_dep(name = "score_process", version = "1.4.3")
-bazel_dep(name = "score_tooling", version = "1.1.0")
-bazel_dep(name = "score_baselibs", version = "0.2.4")
-bazel_dep(name = "score_lifecycle_health", version = "0.1.0")
+### Public modules
+
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "score_bazel_platforms", version = "0.0.4")
 bazel_dep(name = "score_logging", version = "0.1.0")
+
+### Modules that are used internally within the repository but not exposed as part of the public API
+
+bazel_dep(name = "score_docs_as_code", version = "3.0.0", dev_dependency = True)
+bazel_dep(name = "score_process", version = "1.4.3", dev_dependency = True)
+bazel_dep(name = "score_tooling", version = "1.1.0", dev_dependency = True)
+bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2", dev_dependency = True)
+bazel_dep(name = "aspect_rules_lint", version = "1.5.3", dev_dependency = True)
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2", dev_dependency = True)
+bazel_dep(name = "google_benchmark", version = "1.9.5", dev_dependency = True)
+bazel_dep(name = "score_baselibs", version = "0.2.4", dev_dependency = True)
+bazel_dep(name = "score_lifecycle_health", version = "0.1.0", dev_dependency = True)
 
 # TODO: remove once inherited properly from `score_logging`.
 bazel_dep(name = "trlc", version = "0.0.0", dev_dependency = True)
@@ -93,18 +99,3 @@ python.toolchain(
     is_default = True,
     python_version = PYTHON_VERSION,
 )
-
-bazel_dep(name = "aspect_rules_py", version = "1.6.3", dev_dependency = True)
-bazel_dep(name = "aspect_rules_lint", version = "1.5.3", dev_dependency = True)
-bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2", dev_dependency = True)
-
-bazel_dep(name = "nlohmann_json", version = "3.11.3")
-bazel_dep(name = "bazel_skylib", version = "1.8.2")
-
-#############################################################
-#
-# Constraint values for specifying platforms and toolchains
-#
-#############################################################
-bazel_dep(name = "platforms", version = "1.0.0")
-bazel_dep(name = "score_bazel_platforms", version = "0.0.4")
