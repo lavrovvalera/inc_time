@@ -10,32 +10,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-name: Bazel Build (QNX)
+name: Code Coverage (>85%)
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, reopened, synchronize]
   push:
     branches:
       - main
   merge_group:
     types: [checks_requested]
-  workflow_call:
+  release:
+    types: [created]
+
 jobs:
-  qnx-build:
-    strategy:
-      fail-fast: false
-      matrix:
-        bazel-config: [time-x86_64-qnx, time-arm64-qnx]
-    uses: eclipse-score/cicd-workflows/.github/workflows/qnx-build.yml@main
-    permissions:
-      contents: read
-      pull-requests: read
+  code-coverage:
+    uses: eclipse-score/cicd-workflows/.github/workflows/cpp-coverage.yml@main
     with:
       bazel-target: "//score/..."
-      bazel-config: ${{ matrix.bazel-config }}
-      credential-helper: ".github/tools/qnx_credential_helper.py"
-      bazel-disk-cache: ${{ matrix.bazel-config }}
-    secrets:
-      score-qnx-license: ${{ secrets.SCORE_QNX_LICENSE }}
-      score-qnx-user: ${{ secrets.SCORE_QNX_USER }}
-      score-qnx-password: ${{ secrets.SCORE_QNX_PASSWORD }}
+      bazel-config: "time-x86_64-linux"
+      extra-bazel-flags: "--test_output=errors --nocache_test_results"
+      artifact-name-suffix: "_cpp"
+      retention-days: 10
+      min-coverage: 85

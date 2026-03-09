@@ -35,6 +35,7 @@ copyright_checker(
         "examples",
         "score",
         "tests",
+        "tools",
         "//:BUILD",
         "//:MODULE.bazel",
     ],

@@ -21,7 +21,7 @@ on:
     types: [checks_requested]
   workflow_call:
 jobs:
-  linux-build-and-test:
+  linux-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -35,7 +35,4 @@ jobs:
           cache-save: ${{ github.event_name == 'push' }}
       - name: Bazel Build
         run: |
-          bazel build --config time-x86_64-linux -- //score/...
-      - name: Bazel Test
-        run: |
-          bazel test --config time-x86_64-linux -- //score/...
+          bazel build --config time-x86_64-linux -- //score/... //examples/...
