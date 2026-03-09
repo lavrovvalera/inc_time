@@ -11,8 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
+load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
     name = "shared_memory_handler",
@@ -79,9 +79,9 @@ cc_test(
     deps = [
         ":publisher_impl",
         "//score/TimeDaemon/code/ipc:data_converter",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 
@@ -95,9 +95,9 @@ cc_test(
     deps = [
         ":receiver_impl",
         "//score/TimeDaemon/code/ipc:data_converter",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 
@@ -112,8 +112,8 @@ cc_test(
         ":shared_memory_handler",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/ipc:data_converter",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )

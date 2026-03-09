@@ -11,8 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
+load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
     name = "validators",
@@ -33,8 +33,8 @@ cc_library(
         "//score/TimeDaemon/code/common:logging_contexts",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/verification_machine/core:verification_machine",
-        "@score_baselibs//score/mw/log:frontend",
         "//score/time/HighPrecisionLocalSteadyClock",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
@@ -57,9 +57,9 @@ cc_test(
     deps = [
         ":validators",
         "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 
@@ -72,9 +72,9 @@ cc_test(
     deps = [
         ":validators",
         "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 
@@ -87,8 +87,8 @@ cc_test(
     deps = [
         ":validators",
         "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )

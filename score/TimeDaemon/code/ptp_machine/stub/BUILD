@@ -11,8 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
+load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 [
     cc_library(
@@ -30,8 +30,8 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
         tags = ["QM"],
         visibility = ["//score/TimeDaemon:__subpackages__"],
         deps = [
-            "//score/TimeDaemon/code/common/machines",
             "//score/TimeDaemon/code/common:logging_contexts",
+            "//score/TimeDaemon/code/common/machines",
             "//score/TimeDaemon/code/ptp_machine/core:ptp_machine",
             "//score/TimeDaemon/code/ptp_machine/stub/details:stub_ptp_engine",
             "@score_baselibs//score/mw/log:frontend",
@@ -73,8 +73,8 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":gptp_stub_machine_for_utests",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )

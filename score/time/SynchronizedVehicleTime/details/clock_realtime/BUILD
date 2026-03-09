@@ -32,9 +32,9 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
             "//score/time/SynchronizedVehicleTime/test:__subpackages__",
         ],
         deps = [
+            "//score/time/SynchronizedVehicleTime:interfaces",
             "@score_baselibs//score/concurrency",
             "@score_baselibs//score/mw/log:frontend",
-            "//score/time/SynchronizedVehicleTime:interfaces",
         ] + dependencies,
     )
     for name, testonly, dependencies in [
@@ -64,10 +64,10 @@ cc_test(
     visibility = ["//score/time:__subpackages__"],
     deps = [
         ":for_unit_testing",
-        "@score_baselibs//score/language/safecpp/coverage_termination_handler",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 
@@ -80,10 +80,10 @@ cc_test(
     visibility = ["//score/time:__subpackages__"],
     deps = [
         ":for_unit_testing",
-        "@score_baselibs//score/language/safecpp/coverage_termination_handler",
-        "@score_baselibs//score/mw/log:console_only_backend",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/language/safecpp/coverage_termination_handler",
+        "@score_baselibs//score/mw/log:console_only_backend",
     ],
 )
 

@@ -31,9 +31,9 @@ cc_library(
     target_compatible_with = ["@platforms//os:qnx"],
     visibility = ["//score/time/HighPrecisionLocalSteadyClock/details:__subpackages__"],
     deps = [
-        "@score_baselibs//score/os/qnx:neutrino",
         "//score/time/HighPrecisionLocalSteadyClock:interface",
         "//score/time/HighPrecisionLocalSteadyClock/details:factory_impl_header",
+        "@score_baselibs//score/os/qnx:neutrino",
     ],
 )
 
@@ -52,10 +52,10 @@ cc_test(
     target_compatible_with = ["@platforms//os:qnx"],
     deps = [
         ":qclock",
-        "@score_baselibs//score/os/qnx:neutrino_qnx_mock",
         "//score/time/HighPrecisionLocalSteadyClock:interface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@score_baselibs//score/os/qnx:neutrino_qnx_mock",
     ],
 )
 

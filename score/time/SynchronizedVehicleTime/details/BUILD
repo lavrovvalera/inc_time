@@ -11,8 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
+load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
     name = "factory_impl_header",
@@ -35,6 +35,7 @@ filegroup(
         "//score/time/SynchronizedVehicleTime:__subpackages__",
     ],
 )
+
 [
     cc_library(
         name = name,
@@ -59,7 +60,7 @@ filegroup(
             ],
             [],
             [
-                "//score/time/SynchronizedVehicleTime/details/tdr"
+                "//score/time/SynchronizedVehicleTime/details/tdr",
             ],
             [
                 "//score/time/SynchronizedVehicleTime:interfaces",
