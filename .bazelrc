@@ -1,7 +1,21 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
 build --java_language_version=17
 build --tool_java_language_version=17
 build --java_runtime_version=remotejdk_17
 build --tool_java_runtime_version=remotejdk_17
+build --credential_helper="*.qnx.com=%workspace%/.github/tools/qnx_credential_helper.py"
 
 test --test_output=errors
 
@@ -9,3 +23,40 @@ common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry
 common --registry=https://bcr.bazel.build
 
 build --@score_baselibs//score/json:base_library=nlohmann
+
+# -------------------------------------------------------------------------------
+# Shared configuration for simple test execution
+# -------------------------------------------------------------------------------
+build:time_shared --incompatible_strict_action_env
+build:time_shared --sandbox_writable_path=/var/tmp
+build:time_shared --host_platform=@score_bazel_platforms//:x86_64-linux
+
+# -------------------------------------------------------------------------------
+# Config dedicated to host platform CPU:x86_64 and OS:Linux
+# -------------------------------------------------------------------------------
+build:time-x86_64-linux --config=time_shared
+build:time-x86_64-linux --platforms=@score_bazel_platforms//:x86_64-linux-gcc_12.2.0-posix
+build:time-x86_64-linux --extra_toolchains=@score_gcc_x86_64_toolchain//:x86_64-linux-gcc_12.2.0-posix
+# -------------------------------------------------------------------------------
+# Config dedicated to target platform CPU:x86_64 and OS:QNX
+# -------------------------------------------------------------------------------
+build:time-x86_64-qnx --config=time_shared
+build:time-x86_64-qnx --platforms=@score_bazel_platforms//:x86_64-qnx-sdp_8.0.0-posix
+build:time-x86_64-qnx --extra_toolchains=@score_qcc_x86_64_toolchain//:x86_64-qnx-sdp_8.0.0-posix
+
+# -------------------------------------------------------------------------------
+# Config dedicated to target platform CPU:arm64 and OS:QNX
+# -------------------------------------------------------------------------------
+build:time-arm64-qnx --config=time_shared
+build:time-arm64-qnx --platforms=@score_bazel_platforms//:aarch64-qnx-sdp_8.0.0-posix
+build:time-arm64-qnx --extra_toolchains=@score_qcc_aarch64_toolchain//:aarch64-qnx-sdp_8.0.0-posix
+
+# -------------------------------------------------------------------------------
+# Import local user workspace file, if exists
+# -------------------------------------------------------------------------------
+try-import %workspace%/user.bazelrc
+
+# Coverage configuration for C++
+coverage --features=coverage
+coverage --combined_report=lcov
+coverage --cache_test_results=no
