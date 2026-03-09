@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -32,12 +32,13 @@ copyright_checker(
     srcs = [
         ".github",
         "docs",
+        "examples",
         "score",
+        "tests",
         "//:BUILD",
         "//:MODULE.bazel",
     ],
     config = "@score_tooling//cr_checker/resources:config",
-    exclusion = "//:cr_checker_exclusion",
     template = "@score_tooling//cr_checker/resources:templates",
     visibility = ["//visibility:public"],
 )

@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -21,8 +21,10 @@ test --test_output=errors
 
 common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
 common --registry=https://bcr.bazel.build
+common --@score_logging//score/mw/log/flags:KRemote_Logging=False
 
 build --@score_baselibs//score/json:base_library=nlohmann
+build --credential_helper="*.qnx.com=%workspace%/.github/tools/qnx_credential_helper.py"
 
 # -------------------------------------------------------------------------------
 # Shared configuration for simple test execution
