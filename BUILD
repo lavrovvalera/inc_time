@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -20,11 +20,21 @@ setup_starpls(
     visibility = ["//visibility:public"],
 )
 
+docs(
+    data = [
+        "@score_process//:needs_json",
+    ],
+    source_dir = "docs",
+)
+
 copyright_checker(
     name = "copyright",
     srcs = [
-        "src",
-        "tests",
+        ".github",
+        "docs",
+        "examples",
+        "score",
+        "tools",
         "//:BUILD",
         "//:MODULE.bazel",
     ],
@@ -42,7 +52,3 @@ dash_license_checker(
 
 # Add target for formatting checks
 use_format_targets()
-
-docs(
-    source_dir = "docs",
-)
