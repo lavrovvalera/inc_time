@@ -30,8 +30,8 @@ ptp_gm -[#purple]-> ptpd : PTP sync messages
 ptpd ..> hw_counter : Updates local hw timer
 ptpd -[#blue]-> ptp_machine : PTP time updates\n(via shmem and devctl)
 ptp_machine -[#green]-> verification_machine: Time information
-verification_machine -[#green]-> mw: Time information
-verification_machine -[#green]-> mw_ext: Time information
+verification_machine -[#green]-> mw: Time information\n(score::communication)
+verification_machine -[#green]-> mw_ext: Time information\n(score::communication)
 verification_machine -[#green]-> dlt_records: Data for post analysis
 mw-[#orange]-> app_bl : Now()
 mw_ext-[#orange]-> diag_bl : Now(), Callbacks()

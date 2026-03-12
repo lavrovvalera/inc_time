@@ -9,9 +9,9 @@ autoactivate on
 
 legend top left
     |= Color     |= Description                  |
-    |<#LightCyan>| TimeDaemon members            |
-    |<#LightPink>| IPC components                |
-    |<#WhiteSmoke>| Shared Memory                |
+    |<#LightCyan> | TimeDaemon members            |
+    |<#LightPink> | IPC components                |
+    |<#LightCoral>| score::communication          |
 endlegend
 
 box VehicleTimeDaemon #LightYellow
@@ -19,12 +19,12 @@ box VehicleTimeDaemon #LightYellow
     participant "IPCMachine:publisher" as ipc_publisher #LightPink
 end box
 
-participant "shmem" as shared_memory #WhiteSmoke
+participant "score::communication" as score_comm #LightCoral
 
 broker -> ipc_publisher: newTimeData(TimeInfo)
 alt if the data was updated
     ipc_publisher -> ipc_publisher: serialize data
-    ipc_publisher -> shared_memory: store(TimeInfo)
+    ipc_publisher -> score_comm: Send(TimeInfo)
     note right
         All data, which is needed by the Apps, like
         1. current Vehicle time
@@ -32,9 +32,9 @@ alt if the data was updated
         3. status
         4. sync/fup and pdelay frames content
         5. rate and so on
-        shall be stored here
+        shall be published here
     end note
-    shared_memory --> ipc_publisher: success
+    score_comm --> ipc_publisher: success
 end
 ipc_publisher --> broker
 

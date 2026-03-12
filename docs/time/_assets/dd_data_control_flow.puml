@@ -13,7 +13,7 @@ legend top left
     |<#LightBlue>   | ControlFlowDivider            |
     |<#Lavender>    | VerificationMachine           |
     |<#LightPink>   | IPC components                |
-    |<#WhiteSmoke>  | Shared Memory                 |
+    |<#LightCoral>  | score::communication          |
     |<#LightGreen>  | Middleware components         |
     |<#LightSalmon> | Client Application            |
 endlegend
@@ -26,7 +26,7 @@ box TimeDaemon #LightYellow
     participant "IpcPublisher" as ipc_publisher #LightPink
 end box
 
-participant "SharedMemory" as shared_memory #WhiteSmoke
+participant "score::communication" as score_comm #LightCoral
 
 box Application #e6ffe6
     participant "IpcReceiver" as ipc_receiver #LightPink
@@ -66,10 +66,10 @@ group Data processing (event-driven)
 
     broker -> ipc_publisher : OnMessage(PtpTimeInfo)
     activate ipc_publisher
-    ipc_publisher -> shared_memory : Write(PtpTimeInfo)
-    activate shared_memory
-    shared_memory --> ipc_publisher
-    deactivate shared_memory
+    ipc_publisher -> score_comm : Send(PtpTimeInfo)
+    activate score_comm
+    score_comm --> ipc_publisher
+    deactivate score_comm
     ipc_publisher --> broker
     deactivate ipc_publisher
     broker --> cf_divider
@@ -83,10 +83,10 @@ group Application request (on-demand)
     activate mw_svt
     mw_svt -> ipc_receiver : Receive()
     activate ipc_receiver
-    ipc_receiver -> shared_memory : Receive()
-    activate shared_memory
-    shared_memory --> ipc_receiver : PtpTimeInfo
-    deactivate shared_memory
+    ipc_receiver -> score_comm : Receive()
+    activate score_comm
+    score_comm --> ipc_receiver : PtpTimeInfo
+    deactivate score_comm
     ipc_receiver --> mw_svt : PtpTimeInfo
     deactivate ipc_receiver
     mw_svt -> mw_svt : Calculate current time

@@ -8,6 +8,7 @@ legend top left
     | <#LightBlue>      | ControlFlowDivider            |
     | <#Lavender>       | VerificationMachine           |
     | <#LightPink>      | IPC components                |
+    | <#LightCoral>     | score::communication          |
     | <#Beige>          | Base classes                  |
 endlegend
 
@@ -86,13 +87,13 @@ class "VerificationMachine<T>" as ver_machine #Lavender {
 }
 
 class "IpcPublisher<T>" as ipc_publisher #LightPink {
-    Publishes time data via IPC
+    Publishes time data via IPC (score::communication)
     ...
     +OnMessage(data): void
 }
 
 class "IpcReceiver<T>" as ipc_receiver #LightPink {
-    Receives time data via IPC
+    Receives time data via IPC (score::communication)
     ...
     +Receive(): optional<PtpTimeInfo>
 }

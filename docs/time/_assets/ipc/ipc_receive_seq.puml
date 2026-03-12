@@ -10,7 +10,7 @@ autoactivate on
 legend top left
     |= Color        |= Description                  |
     |<#LightPink>   | IPC components                |
-    |<#WhiteSmoke>  | Shared Memory                 |
+    |<#LightCoral>  | score::communication          |
     |<#LightSalmon> | Client Application            |
 endlegend
 
@@ -19,11 +19,11 @@ box mw::time::svt #e6ffe6
     participant "IPCMachine:receiver" as ipc_receiver #LightPink
 end box
 
-participant "shmem" as shared_memory #WhiteSmoke
+participant "score::communication" as score_comm #LightCoral
 
 mw_worker -> ipc_receiver: receive()
-ipc_receiver -> shared_memory: read()
-shared_memory --> ipc_receiver: TimeInfo
+ipc_receiver -> score_comm: Receive()
+score_comm --> ipc_receiver: TimeInfo
 ipc_receiver --> mw_worker: TimeInfo
 
 @enduml

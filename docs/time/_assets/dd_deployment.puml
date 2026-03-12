@@ -13,7 +13,7 @@ node "VehicleTimeDaemon" {
     [MessageBroker]  as msg_broker
     [VerificationMachine]  as verification_machine
     [PTP machine] as ptp_machine
-    [IPC] as ipc
+    [IPC] <<score::communication>> as ipc
 }
 
 ptpd -[#blue]-> ptp_machine : PTP time updates\n(via shmem and devctl)

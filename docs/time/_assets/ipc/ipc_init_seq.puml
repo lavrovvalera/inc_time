@@ -11,7 +11,7 @@ legend top left
     |= Color        |= Description                  |
     |<#LightCyan>   | TimeDaemon members            |
     |<#LightPink>   | IPC components                |
-    |<#WhiteSmoke>  | Shared Memory                 |
+    |<#LightCoral>  | score::communication          |
     |<#LightSalmon> | Client Application            |
     |<#LightGreen>  | Middleware components         |
 endlegend
@@ -22,7 +22,7 @@ box VehicleTimeDaemon #LightYellow
     participant "IPCMachine:publisher" as ipc_publisher #LightPink
 end box
 
-participant "shmem" as shared_memory #WhiteSmoke
+participant "score::communication" as score_comm #LightCoral
 
 box Application #e6ffe6
     participant "IPCMachine:receiver" as ipc_receiver #LightPink
@@ -31,17 +31,17 @@ box Application #e6ffe6
 end box
 
 app -> ipc_publisher: create()
-ipc_publisher -> shared_memory**: create
-shared_memory --> ipc_publisher: success
+ipc_publisher -> score_comm**: OfferService()
+score_comm --> ipc_publisher: success
 ipc_publisher --> app : ipc_publisher object
 app -> broker : subscribe("verified_ptp_data", ipc_publisher::onNewData)
 broker --> app
 
 client_app -> mw: create()
 mw -> ipc_receiver: create()
-loop while try_open returns false
-    ipc_receiver -> shared_memory: try_open()
-    shared_memory --> ipc_receiver: success or fail
+loop while FindService returns not ready
+    ipc_receiver -> score_comm: FindService()
+    score_comm --> ipc_receiver: success or not ready
 end
 ipc_receiver --> mw
 mw --> client_app

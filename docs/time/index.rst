@@ -549,7 +549,7 @@ When the ``Verification Machine`` receives new PTP data, it processes it through
 IPC Machine SW component
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``IPC Machine`` component shall get the `verified-ptp-data <#verified-ptp-data>`_ from the ``Verification Machine`` and provide it to the ``score::time::svt`` through shared memory or other ipc mechanisms.
+The ``IPC Machine`` component shall get the `verified-ptp-data <#verified-ptp-data>`_ from the ``Verification Machine`` and provide it to the ``score::time::svt`` through the ``score::communication`` module. As the fast initial implementation, a custom shared memory backend is used.
 
 The component provides two sub components: publisher and receiver to be deployed on the TimeDaemon and Application sides accordingly.
 
@@ -558,7 +558,7 @@ Component requirements
 
 The ``IPC Machine`` has the following requirements:
 
-- The ``IPC Machine`` shall provide verified time data to the ``score::time::svt`` component through shared memory or other IPC mechanisms
+- The ``IPC Machine`` shall provide verified time data to the ``score::time::svt`` component through the ``score::communication`` module
 - The ``IPC Machine`` shall create and initialize the IPC
 - The ``IPC Machine`` shall support multiple client applications accessing the same time data
 - The ``IPC Machine`` shall subscribe to the `verified_ptp_data <#verified-ptp-data>`_ topic via the ``Message Broker``
@@ -587,7 +587,7 @@ Initialization is divided to two parts:
 1. Initialization on the TimeDaemon side
 2. Initialization on the Application side
 
-Important thing, the shared memory shall be created by the ``TimeDaemon``, which means the Application should wait until the ``shmem`` will be created and only then open, map and read it.
+Important thing, the ``score::communication`` publisher shall be created and offered by the ``TimeDaemon`` before the Application side subscriber can connect. The Application shall retry until the service is found.
 
 The main workflow is described below.
 
@@ -607,14 +607,14 @@ The component shall be subscribed during initialization by the ``Application`` o
 Publish new data
 ''''''''''''''''
 
-When ``IPC Machine`` receives the new `verified-ptp-data <#verified-ptp-data>`_ from Message Broker, it shall serialize data and store it to the shared memory.
+When ``IPC Machine`` receives the new `verified-ptp-data <#verified-ptp-data>`_ from Message Broker, it shall serialize data and publish it via ``score::communication``.
 
 As long as there are different use cases by using it, like:
 
 1. Get current Vehicle time
 2. Get data for diagnostics
 
-All ``PTPTimeInfo`` data (or almost all) shall be shared across applications.
+All ``PTPTimeInfo`` data (or almost all) shall be published to the subscribed applications.
 
 The publish workflow is described below.
 
@@ -632,7 +632,7 @@ The publish workflow is described below.
 Receive data
 ''''''''''''
 
-From Application side the receiver shall read the ``shared_memory`` and provide the data to the caller.
+From Application side the receiver shall subscribe via ``score::communication`` and provide the data to the caller.
 
 The receive workflow is described below.
 
