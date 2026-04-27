@@ -14,27 +14,35 @@
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
+# Production backend: delegates directly to std::chrono::system_clock::now().
+# Link this target (via //score/time/system_time:system_time) into production binaries.
 cc_library(
-    name = "time_base_status",
-    hdrs = [
-        "time_base_status.h",
-    ],
+    name = "system_time_impl",
+    srcs = ["system_clock_impl.cpp"],
+    hdrs = ["system_clock_impl.h"],
     features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
+    visibility = ["//score/time/system_time:__pkg__"],
     deps = [
-        "@score_baselibs//score/language/futurecpp",
+        "//score/time/clock:clock_core",
+        "//score/time/system_time:system_clock",
+        "//score/time/system_time:system_clock_iface",
     ],
 )
 
 cc_test(
-    name = "time_base_status_test",
+    name = "system_clock_impl_test",
+    testonly = True,
     srcs = [
-        "time_base_status_test.cpp",
+        "system_clock_impl.cpp",
+        "system_clock_impl.h",
+        "system_clock_impl_test.cpp",
     ],
+    features = COMPILER_WARNING_FEATURES,
     tags = ["unit"],
     deps = [
-        ":time_base_status",
+        "//score/time/clock:clock_core",
+        "//score/time/system_time:system_clock",
+        "//score/time/system_time:system_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -42,8 +50,6 @@ cc_test(
 
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
-    cc_unit_tests = [
-        ":time_base_status_test",
-    ],
-    visibility = ["//score/time:__pkg__"],
+    cc_unit_tests = [":system_clock_impl_test"],
+    visibility = ["//score/time/system_time/details:__pkg__"],
 )

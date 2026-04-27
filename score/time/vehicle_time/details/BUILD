@@ -12,38 +12,18 @@
 # *******************************************************************************
 
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
-cc_library(
-    name = "time_base_status",
-    hdrs = [
-        "time_base_status.h",
-    ],
-    features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
-    deps = [
-        "@score_baselibs//score/language/futurecpp",
-    ],
-)
-
-cc_test(
-    name = "time_base_status_test",
-    srcs = [
-        "time_base_status_test.cpp",
-    ],
-    tags = ["unit"],
-    deps = [
-        ":time_base_status",
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
-    ],
+filegroup(
+    name = "logging_contexts",
+    srcs = ["logging_contexts.h"],
+    visibility = ["//score/time/vehicle_time:__subpackages__"],
 )
 
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
-    cc_unit_tests = [
-        ":time_base_status_test",
+    cc_unit_tests = [],
+    test_suites_from_sub_packages = [
+        "//score/time/vehicle_time/details/td_impl:unit_test_suite",
     ],
-    visibility = ["//score/time:__pkg__"],
+    visibility = ["//score/time/vehicle_time:__pkg__"],
 )

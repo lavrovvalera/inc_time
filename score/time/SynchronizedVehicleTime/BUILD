@@ -11,12 +11,17 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+# DEPRECATED — replaced by //score/time/vehicle_time.
+# This package will be deleted once all consumers (TimeDaemon) have been migrated.
+# Do NOT add new dependencies on any target in this package.
+
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 alias(
     name = "SynchronizedVehicleTime",
     actual = "//score/time/SynchronizedVehicleTime/details:factory_impl",
+    deprecation = "DEPRECATED: use //score/time/vehicle_time:vehicle_time instead. This target will be removed after TimeDaemon migration.",
     visibility = [
         "//visibility:public",
     ],
@@ -26,6 +31,7 @@ alias(
     name = "utest_mock",
     testonly = True,
     actual = "//score/time/SynchronizedVehicleTime/details:factory_impl_for_utests",
+    deprecation = "DEPRECATED: use //score/time/vehicle_time:vehicle_time_mock instead. This target will be removed after TimeDaemon migration.",
     visibility = [
         "//visibility:public",
     ],

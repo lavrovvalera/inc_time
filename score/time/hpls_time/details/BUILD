@@ -12,38 +12,22 @@
 # *******************************************************************************
 
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
-load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
+load("@score_baselibs//third_party/itf:py_unittest_qnx_test.bzl", "py_unittest_qnx_test")
 
-cc_library(
-    name = "time_base_status",
-    hdrs = [
-        "time_base_status.h",
+py_unittest_qnx_test(
+    name = "qnx_unit_test_cases",
+    test_suites = [
+        "//score/time/hpls_time/details/qtime:qnx_unit_test_cases",
+        "//score/time/hpls_time/details/system_clock:qnx_unit_test_cases",
     ],
-    features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
-    deps = [
-        "@score_baselibs//score/language/futurecpp",
-    ],
-)
-
-cc_test(
-    name = "time_base_status_test",
-    srcs = [
-        "time_base_status_test.cpp",
-    ],
-    tags = ["unit"],
-    deps = [
-        ":time_base_status",
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
-    ],
+    visibility = ["//score/time/hpls_time:__pkg__"],
 )
 
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
-    cc_unit_tests = [
-        ":time_base_status_test",
+    cc_unit_tests = [],
+    test_suites_from_sub_packages = [
+        "//score/time/hpls_time/details/system_clock:unit_test_suite",
     ],
-    visibility = ["//score/time:__pkg__"],
+    visibility = ["//score/time/hpls_time:__pkg__"],
 )

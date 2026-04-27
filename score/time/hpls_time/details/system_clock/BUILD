@@ -14,27 +14,38 @@
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
+# Non-QNX production backend for HplsTime.
+# Wraps std::chrono::high_resolution_clock and provides CreateBackend<HplsTime>().
 cc_library(
-    name = "time_base_status",
+    name = "system_clock",
+    srcs = [
+        "hpls_time_impl.cpp",
+    ],
     hdrs = [
-        "time_base_status.h",
+        "hpls_time_impl.h",
     ],
     features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
+    visibility = ["//score/time/hpls_time:__subpackages__"],
     deps = [
-        "@score_baselibs//score/language/futurecpp",
+        "//score/time/clock:clock_core",
+        "//score/time/hpls_time:hpls_clock",
+        "//score/time/hpls_time:hpls_clock_iface",
     ],
 )
 
 cc_test(
-    name = "time_base_status_test",
+    name = "hpls_time_impl_test",
+    testonly = True,
     srcs = [
-        "time_base_status_test.cpp",
+        "hpls_time_impl.cpp",
+        "hpls_time_impl.h",
+        "hpls_time_impl_test.cpp",
     ],
     tags = ["unit"],
     deps = [
-        ":time_base_status",
+        "//score/time/clock:clock_core",
+        "//score/time/hpls_time:hpls_clock",
+        "//score/time/hpls_time:hpls_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -43,7 +54,7 @@ cc_test(
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
     cc_unit_tests = [
-        ":time_base_status_test",
+        ":hpls_time_impl_test",
     ],
-    visibility = ["//score/time:__pkg__"],
+    visibility = ["//score/time/hpls_time/details:__pkg__"],
 )

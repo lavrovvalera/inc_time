@@ -15,12 +15,18 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
-    name = "time_base_status",
+    name = "clock_core",
     hdrs = [
-        "time_base_status.h",
+        "availability_hook.h",
+        "clock.h",
+        "clock_override_guard.h",
+        "clock_snapshot.h",
+        "clock_status.h",
+        "clock_traits.h",
+        "no_status.h",
+        "subscription_hook.h",
     ],
     features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
     visibility = ["//score/time:__subpackages__"],
     deps = [
         "@score_baselibs//score/language/futurecpp",
@@ -28,13 +34,12 @@ cc_library(
 )
 
 cc_test(
-    name = "time_base_status_test",
-    srcs = [
-        "time_base_status_test.cpp",
-    ],
+    name = "clock_status_test",
+    srcs = ["clock_status_test.cpp"],
+    features = COMPILER_WARNING_FEATURES,
     tags = ["unit"],
     deps = [
-        ":time_base_status",
+        ":clock_core",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -43,7 +48,7 @@ cc_test(
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
     cc_unit_tests = [
-        ":time_base_status_test",
+        ":clock_status_test",
     ],
     visibility = ["//score/time:__pkg__"],
 )

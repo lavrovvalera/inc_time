@@ -11,39 +11,21 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
+# Test-only stub: provides CreateBackend<std::chrono::system_clock>() returning
+# an epoch-zero snapshot. Link this (via :system_clock_mock) into test binaries
+# instead of the production system_time_impl backend.
 cc_library(
-    name = "time_base_status",
-    hdrs = [
-        "time_base_status.h",
-    ],
+    name = "stub_impl",
+    testonly = True,
+    srcs = ["system_clock_impl.cpp"],
+    hdrs = ["system_clock_impl.h"],
     features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
+    visibility = ["//score/time/system_time:__pkg__"],
     deps = [
-        "@score_baselibs//score/language/futurecpp",
+        "//score/time/clock:clock_core",
+        "//score/time/system_time:system_clock",
+        "//score/time/system_time:system_clock_iface",
     ],
-)
-
-cc_test(
-    name = "time_base_status_test",
-    srcs = [
-        "time_base_status_test.cpp",
-    ],
-    tags = ["unit"],
-    deps = [
-        ":time_base_status",
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
-    ],
-)
-
-cc_unit_test_suites_for_host_and_qnx(
-    name = "unit_test_suite",
-    cc_unit_tests = [
-        ":time_base_status_test",
-    ],
-    visibility = ["//score/time:__pkg__"],
 )

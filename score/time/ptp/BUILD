@@ -14,27 +14,45 @@
 load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and_qnx")
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
+# PTP-protocol notification data types, reusable across all PTP time domains
+# (e.g. VehicleTime, EptmTime, ...).
+#
+# These types are purely structural (header-only, no OS/IPC deps) and carry no
+# knowledge of any specific time domain.  Time-domain tags are injected as
+# template parameters (Timebase).
 cc_library(
-    name = "time_base_status",
+    name = "ptp_types",
     hdrs = [
-        "time_base_status.h",
+        "local_ptp_device_timer.h",
+        "master_ptp_device_timer.h",
+        "pdelay_measurement_data.h",
+        "port_identity.h",
+        "time_slave_sync_data.h",
     ],
     features = COMPILER_WARNING_FEATURES,
     tags = ["FFI"],
     visibility = ["//score/time:__subpackages__"],
+)
+
+cc_test(
+    name = "time_slave_sync_data_test",
+    srcs = ["time_slave_sync_data_test.cpp"],
+    features = COMPILER_WARNING_FEATURES,
+    tags = ["unit"],
     deps = [
-        "@score_baselibs//score/language/futurecpp",
+        ":ptp_types",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 
 cc_test(
-    name = "time_base_status_test",
-    srcs = [
-        "time_base_status_test.cpp",
-    ],
+    name = "pdelay_measurement_data_test",
+    srcs = ["pdelay_measurement_data_test.cpp"],
+    features = COMPILER_WARNING_FEATURES,
     tags = ["unit"],
     deps = [
-        ":time_base_status",
+        ":ptp_types",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -43,7 +61,8 @@ cc_test(
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
     cc_unit_tests = [
-        ":time_base_status_test",
+        ":time_slave_sync_data_test",
+        ":pdelay_measurement_data_test",
     ],
     visibility = ["//score/time:__pkg__"],
 )

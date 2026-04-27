@@ -35,6 +35,7 @@ alias(
         # Added visibility for integration test purpose
         "//score/TimeDaemon:__subpackages__",
         "//score/time/SynchronizedVehicleTime/details/tdr:__pkg__",
+        "//score/time/vehicle_time/details/td_impl:__pkg__",
     ],
 )
 
@@ -43,7 +44,10 @@ alias(
     name = "svt_receiver_mock",
     actual = "//score/TimeDaemon/code/ipc/svt/receiver:factory_mock",
     tags = ["QM"],
-    visibility = ["//score/time/SynchronizedVehicleTime/details/tdr:__pkg__"],
+    visibility = [
+        "//score/time/SynchronizedVehicleTime/details/tdr:__pkg__",
+        "//score/time/vehicle_time/details/td_impl:__pkg__",
+    ],
 )
 
 # receiver interface alias
