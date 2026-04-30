@@ -1,0 +1,68 @@
+@startuml uc_availability
+
+title UC2 — Availability Waiting at initialization phase
+
+skinparam backgroundColor white
+hide footbox
+autonumber "<font color=navy><b>[00]"
+
+legend top left
+    |= Color               |= Description                  |
+    |<#LightSalmon>        | Application business logic    |
+    |<#LightGreen>         | score::time framework         |
+    |<#LightCoral>         | VehicleTime backend           |
+endlegend
+
+box "Application" #e6f0ff
+    participant "Business\nlogic" as app #LightSalmon
+end box
+
+box "score::time" #f0fff0
+    participant "VehicleClock\n(Clock<VehicleTime>)" as clock #LightGreen
+    participant "VehicleClockIface\n(Backend)" as backend #LightCoral
+end box
+
+app -> clock : GetInstance()
+activate clock
+clock --> app : handle
+deactivate clock
+
+note over app
+    Non-blocking variant
+end note
+
+app -> clock : IsAvailable()
+activate clock
+clock -> backend : IsAvailable()
+activate backend
+backend --> clock : false  (PTP not yet ready)
+deactivate backend
+clock --> app : false
+deactivate clock
+
+app -> app : ... wait / retry ...
+
+note over app
+    Blocking variant with stop_token + deadline
+end note
+
+app -> clock : WaitUntilAvailable(stop_token,\n  steady_clock::now() + 30s)
+activate clock
+loop until available OR deadline OR stop requested
+    clock -> backend : IsAvailable()
+    activate backend
+    backend --> clock : bool
+    deactivate backend
+end
+clock --> app : true (became available)
+deactivate clock
+
+note over of app
+    Only Clock<Tag> domains that require
+    async init expose IsAvailable().
+    HplsTime / SteadyTime / SystemTime
+    are always ready — calling IsAvailable()
+    on them is a compile error.
+end note
+
+@enduml

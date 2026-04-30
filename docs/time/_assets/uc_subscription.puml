@@ -1,0 +1,69 @@
+@startuml uc_subscription
+
+title UC3 — Async PTP Event Subscription
+
+skinparam backgroundColor white
+hide footbox
+autonumber "<font color=navy><b>[00]"
+
+legend top left
+    |= Color               |= Description              |
+    |<#LightSalmon>        | Application code          |
+    |<#LightGreen>         | score::time framework     |
+    |<#LightCoral>         | VehicleTime backend       |
+endlegend
+
+box "Application" #e6f0ff
+    participant "Application\ncomponent" as app #LightSalmon
+end box
+
+box "score::time" #f0fff0
+    participant "VehicleClock\n(Clock<VehicleTime>)" as clock #LightGreen
+    participant "VehicleClockIface\n(Backend)" as backend #LightCoral
+end box
+
+app -> clock : GetInstance()
+activate clock
+clock --> app : handle
+deactivate clock
+
+note over app
+    Register callbacks once at init
+end note
+
+app -> clock : Subscribe<TimeSlaveSyncData<VehicleTime>>(cb)
+activate clock
+clock -> backend : SetTimeSlaveSyncDataReceivedCallback(cb)
+activate backend
+backend --> clock
+deactivate backend
+clock --> app
+deactivate clock
+
+app -> clock : Subscribe<PDelayMeasurementData<VehicleTime>>(cb)
+activate clock
+clock -> backend : SetPDelayMeasurementFinishedCallback(cb)
+activate backend
+backend --> clock
+deactivate backend
+clock --> app
+deactivate clock
+
+... PTP sync event arrives from hardware ...
+
+backend -> app : cb(TimeSlaveSyncData<VehicleTime>)
+note right of backend
+    called on backend thread
+    — callback must be thread-safe
+end note
+
+... PTP peer-delay measurement completes ...
+
+backend -> app : cb(PDelayMeasurementData<VehicleTime>)
+
+note over app
+    To remove a subscription:
+    clock.Unsubscribe<TimeSlaveSyncData<VehicleTime>>()
+end note
+
+@enduml

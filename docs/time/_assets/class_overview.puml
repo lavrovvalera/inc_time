@@ -1,0 +1,133 @@
+@startuml class_overview
+
+title score::time — Class Overview
+
+skinparam backgroundColor white
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888888
+
+legend top left
+    | <#LightGreen>    | Public framework types              |
+    | <#Wheat>         | Time-domain tag structs (public)    |
+    | <#LightBlue>     | PTP notification types (public)     |
+    | <#LightCoral>    | Internal interfaces (details/)      |
+endlegend
+
+' --- Framework ---
+class "Clock<Tag>" as clock #LightGreen {
+    + {static} GetInstance() : Clock<Tag>
+    + Now() : Snapshot
+    + Subscribe<EventType>(cb) : void
+    + Unsubscribe<EventType>() : void
+    + IsAvailable() : bool  [VehicleTime only]
+    + WaitUntilAvailable(token, until) : bool  [VehicleTime only]
+    --
+    - impl_ : shared_ptr<Backend>
+    - {static} instance_cache_ : weak_ptr<Backend>
+    - {static} instance_override_ : shared_ptr<Backend>
+}
+
+class "ClockOverrideGuard<Tag>" as guard #LightGreen {
+    + ClockOverrideGuard(shared_ptr<Backend>)
+    + ~ClockOverrideGuard()
+    --
+    move-only, non-re-entrant
+}
+
+class "ClockSnapshot<TimepointT, StatusT>" as snapshot #LightGreen {
+    + TimePoint() : TimepointT
+    + Status() : StatusT
+}
+
+class "ClockStatus<FlagEnumT>" as status #LightGreen {
+    + IsFlagActive(flag) : bool
+    + IsAnyOfFlagsActive(flags) : bool
+    + IsSynchronized() : bool  [VehicleTime specialization]
+    + IsValid() : bool          [VehicleTime specialization]
+    + AddFlag(flag) : void
+    + ClearFlag(flag) : void
+}
+
+' --- Tags ---
+class "VehicleTime" as vtag #Wheat {
+    + enum StatusFlag
+    + using Duration = nanoseconds
+    + using Timepoint = time_point<VehicleTime, ns>
+    + using TimeSlaveSyncDataReceivedCallback
+    + using PDelayMeasurementFinishedCallback
+}
+
+class "VehicleTimeStatus" as vstatus #Wheat {
+    + flags : ClockStatus<VehicleTime::StatusFlag>
+    + rate_deviation : double
+    + IsSynchronized() : bool
+    + IsValid() : bool
+    + IsFlagActive(flag) : bool
+}
+
+class "HplsTime" as htag #Wheat {
+    + using Duration = nanoseconds
+    + using Timepoint = time_point<HplsTime, ns>
+}
+
+note as ntag
+    std::chrono::steady_clock and
+    std::chrono::system_clock are also
+    valid Tag types — built-in specializations
+    provided by clock_traits.h
+end note
+
+' --- PTP types ---
+class "TimeSlaveSyncData<Tag>" as tss #LightBlue {
+    + time_slave_sync_data
+    + port_identity
+    + timestamp
+}
+
+class "PDelayMeasurementData<Tag>" as pdm #LightBlue {
+    + pdelay_result
+    + port_identity
+}
+
+' --- Internal ---
+abstract class "VehicleClockIface" as viface #LightCoral {
+    + {abstract} Now() : Snapshot
+    + {abstract} IsAvailable() : bool
+    + {abstract} WaitUntilAvailable(token, until) : bool
+    + {abstract} SetTimeSlaveSyncDataReceivedCallback(cb)
+    + {abstract} UnsetTimeSlaveSyncDataReceivedCallback()
+    + {abstract} SetPDelayMeasurementFinishedCallback(cb)
+    + {abstract} UnsetPDelayMeasurementFinishedCallback()
+}
+
+abstract class "HplsClockIface" as hiface #LightCoral {
+    + {abstract} Now() : Snapshot
+}
+
+class "VehicleTimeMock" as vmock #LightCoral {
+    MOCK_METHOD: Now, IsAvailable,
+    WaitUntilAvailable,
+    SetTimeSlaveSyncDataReceivedCallback,
+    UnsetTimeSlaveSyncDataReceivedCallback,
+    SetPDelayMeasurementFinishedCallback,
+    UnsetPDelayMeasurementFinishedCallback
+}
+
+' --- Relationships ---
+clock "1" *--> "1" viface : impl_ (VehicleTime)
+clock "1" *--> "1" hiface : impl_ (HplsTime)
+guard ..> clock : OverrideForTest / ResetOverride
+
+clock --> snapshot : returns from Now()
+snapshot *-- vstatus : Status()
+
+viface <|-- vmock : test double
+
+vtag --> vstatus
+vtag --> tss
+vtag --> pdm
+vstatus *-- status
+
+htag .r. ntag
+
+@enduml

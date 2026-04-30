@@ -1,0 +1,56 @@
+@startuml uc_polling
+
+title UC1 — Time Polling with Status Check
+
+skinparam backgroundColor white
+hide footbox
+autonumber "<font color=navy><b>[00]"
+
+legend top left
+    |= Color               |= Description               |
+    |<#LightSalmon>        | Application business logic |
+    |<#LightGreen>         | score::time framework      |
+    |<#LightCoral>         | VehicleTime backend        |
+endlegend
+
+box "Application" #e6f0ff
+    participant "Application\ncode" as app #LightSalmon
+end box
+
+box "score::time" #f0fff0
+    participant "VehicleClock\n(Clock<VehicleTime>)" as clock #LightGreen
+    participant "VehicleClockIface\n(Backend)" as backend #LightCoral
+end box
+
+app -> clock : VehicleClock::GetInstance()
+activate clock
+clock -> clock : check cache / override
+clock --> app : Clock<VehicleTime> handle
+deactivate clock
+
+app -> clock : Now()
+activate clock
+clock -> backend : Now()
+activate backend
+note right of backend
+    reads PTP SHM seqlock
+    atomically
+end note
+backend --> clock : ClockSnapshot{timepoint, status}
+deactivate backend
+clock --> app : ClockSnapshot<Timepoint, VehicleTimeStatus>
+deactivate clock
+
+alt snapshot.Status().IsSynchronized()
+    app -> app : snapshot.TimePoint()
+    note right of app
+        use the timepoint value
+    end note
+else not synchronized
+    note right of app
+        time is not synchronized yet —
+        handle this case (e.g. retry later)
+    end note
+end
+
+@enduml
