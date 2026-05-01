@@ -28,7 +28,7 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common:logging_contexts",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
-        "//score/time/HighPrecisionLocalSteadyClock:interface",
+        "//score/time/hpls_time:interface",
         "@score_baselibs//score/mw/log:frontend",
     ],
 )

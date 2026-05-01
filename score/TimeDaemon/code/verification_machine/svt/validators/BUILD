@@ -33,7 +33,7 @@ cc_library(
         "//score/TimeDaemon/code/common:logging_contexts",
         "//score/TimeDaemon/code/common/data_types:ptp_time_info",
         "//score/TimeDaemon/code/verification_machine/core:verification_machine",
-        "//score/time/HighPrecisionLocalSteadyClock",
+        "//score/time/hpls_time:interface",
         "@score_baselibs//score/mw/log:frontend",
     ],
 )
@@ -56,7 +56,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":validators",
-        "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
+        "//score/time/hpls_time:hpls_time_mock",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/mw/log:console_only_backend",
@@ -71,7 +71,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":validators",
-        "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
+        "//score/time/hpls_time:hpls_time_mock",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/mw/log:console_only_backend",
@@ -86,7 +86,7 @@ cc_test(
     tags = ["unit"],
     deps = [
         ":validators",
-        "//score/time/HighPrecisionLocalSteadyClock:utest_mock",
+        "//score/time/hpls_time:hpls_time_mock",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/mw/log:console_only_backend",

@@ -17,8 +17,6 @@
 #include <ostream>
 #include <type_traits>
 
-#include "score/time/HighPrecisionLocalSteadyClock/high_precision_local_steady_clock.h"
-
 #include "score/TimeDaemon/code/common/data_types/ptp_time_info.h"
 #include "score/TimeDaemon/code/ipc/data_converter.h"
 

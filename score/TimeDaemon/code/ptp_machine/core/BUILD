@@ -27,7 +27,7 @@ cc_library(
     deps = [
         "//score/TimeDaemon/code/common/data_flow",
         "//score/TimeDaemon/code/common/machines",
-        "//score/time/HighPrecisionLocalSteadyClock",
+        "//score/time/hpls_time:interface",
         "@score_baselibs//score/mw/log:frontend",
     ],
 )
