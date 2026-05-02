@@ -20,11 +20,15 @@ package "Client Code" #LightYellow {
 
 package "Public Interface — clock/" #LightGreen {
     [Clock<Tag>] as clock
-    [ClockOverrideGuard<Tag>] as guard
     [VehicleClock alias] as vclock
     [HplsClock alias] as hclock
     [SteadyClock alias] as sclock
     [SystemClock alias] as sysclock
+}
+
+package "Test utilities — clock/ (testonly)" #LightYellow {
+    [test_utils::ScopedClockOverride<Tag>] as guard
+    [test_utils::ClockTestFactory<Tag>] as factory
 }
 
 package "Time-Domain Tags" #Wheat {
@@ -57,7 +61,8 @@ package "Internal — details/ (never included by clients)" #LightCoral {
 
 app --> vclock : #include vehicle_clock.h
 app --> hclock : #include hpls_clock.h
-test --> guard : ClockOverrideGuard<VehicleTime>
+test --> guard : ScopedClockOverride<VehicleTime>
+test --> factory : ClockTestFactory<HplsTime>::Make(mock)
 
 vclock --> clock
 hclock --> clock
