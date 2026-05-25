@@ -10,11 +10,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/vehicle_time/src/details/td_impl/vehicle_clock_impl.h"
+#include "score/time/vehicle_time/src/details/td_impl/vehicle_clock_backend_impl.h"
 
 #include "score/TimeDaemon/code/ipc/receiver_mock.h"
 #include "score/TimeDaemon/code/ipc/svt/svt_time_info.h"
-#include "score/time/hpls_time/src/hpls_clock_mock.h"
+#include "score/time/hpls_time/src/hpls_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_snapshot.h"
 #include "score/time/clock/src/no_status.h"
@@ -42,17 +42,17 @@ class VehicleTimeImplTest : public ::testing::Test
 {
   protected:
     VehicleTimeImplTest()
-        : mock_hpls_{std::make_shared<HplsClockMock>()}
+        : mock_hpls_{std::make_shared<HplsClockBackendMock>()}
         , hpls_guard_{mock_hpls_}
         , mock_svt_{std::make_shared<SvtMock>()}
-        , impl_{std::make_unique<detail::VehicleClockImpl>(mock_svt_, HplsClock::GetInstance())}
+        , impl_{std::make_unique<detail::VehicleClockBackendImpl>(mock_svt_, HplsClock::GetInstance())}
     {
     }
 
-    std::shared_ptr<HplsClockMock>             mock_hpls_;
+    std::shared_ptr<HplsClockBackendMock>             mock_hpls_;
     test_utils::ScopedClockOverride<HplsTime>              hpls_guard_;
     std::shared_ptr<SvtMock>                  mock_svt_;
-    std::unique_ptr<detail::VehicleClockImpl> impl_;
+    std::unique_ptr<detail::VehicleClockBackendImpl> impl_;
 };
 
 // ── IsAvailable ──────────────────────────────────────────────────────────────

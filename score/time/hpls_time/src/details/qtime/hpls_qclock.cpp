@@ -64,7 +64,7 @@ std::chrono::nanoseconds HplsQClock::ClockCyclesToNanoseconds(
 }  // namespace hpls_time
 
 template <>
-std::shared_ptr<HplsClockIface> detail::CreateBackend<HplsTime>()
+std::shared_ptr<HplsClockBackend> detail::CreateBackend<HplsTime>()
 {
     return std::make_shared<hpls_time::qtime::HplsQClock>();
 }

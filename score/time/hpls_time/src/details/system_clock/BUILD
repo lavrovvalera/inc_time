@@ -29,7 +29,6 @@ cc_library(
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/hpls_time/src:hpls_clock",
-        "//score/time/hpls_time/src:hpls_clock_iface",
     ],
 )
 
@@ -45,7 +44,6 @@ cc_test(
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/hpls_time/src:hpls_clock",
-        "//score/time/hpls_time/src:hpls_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

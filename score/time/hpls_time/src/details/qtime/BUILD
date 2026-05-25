@@ -31,7 +31,6 @@ cc_library(
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/hpls_time/src:hpls_clock",
-        "//score/time/hpls_time/src:hpls_clock_iface",
         "@score_baselibs//score/os/qnx:neutrino",
     ],
 )
@@ -52,7 +51,6 @@ cc_test(
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/hpls_time/src:hpls_clock",
-        "//score/time/hpls_time/src:hpls_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/os/qnx:neutrino_qnx_mock",

@@ -10,8 +10,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_IFACE_H
-#define SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_IFACE_H
+#ifndef SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_H
+#define SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_H
 
 #include "score/time/clock/src/clock_snapshot.h"
 #include "score/time/clock/src/no_status.h"
@@ -32,10 +32,10 @@ namespace time
 /// This header is the contract shared by Clock<std::chrono::system_clock>,
 /// test mocks, and production/test backends.
 ///
-class SystemClockIface
+class SystemClockBackend
 {
   public:
-    virtual ~SystemClockIface() noexcept = default;
+    virtual ~SystemClockBackend() noexcept = default;
 
     /// \brief Returns the current system-clock snapshot.
     virtual ClockSnapshot<std::chrono::system_clock::time_point, NoStatus>
@@ -46,4 +46,4 @@ class SystemClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_IFACE_H
+#endif  // SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_H

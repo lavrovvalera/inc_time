@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/vehicle_time/src/vehicle_clock_mock.h"
+#include "score/time/vehicle_time/src/vehicle_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 
 #include <score/stop_token.hpp>
@@ -52,7 +52,7 @@ class SampleVehicleService
 
 TEST(VehicleClockTest, NowReturnsSynchronizedStatusAndTimepoint)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     VehicleTimeStatus status;
@@ -70,7 +70,7 @@ TEST(VehicleClockTest, NowReturnsSynchronizedStatusAndTimepoint)
 
 TEST(VehicleClockTest, NowIsSynchronizedReturnsTrueWhenFlagSet)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     VehicleTimeStatus status;
@@ -83,7 +83,7 @@ TEST(VehicleClockTest, NowIsSynchronizedReturnsTrueWhenFlagSet)
 
 TEST(VehicleClockTest, NowIsSynchronizedReturnsFalseWhenTimeoutSet)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     VehicleTimeStatus status;
@@ -97,7 +97,7 @@ TEST(VehicleClockTest, NowIsSynchronizedReturnsFalseWhenTimeoutSet)
 
 TEST(VehicleClockTest, IsAvailableReturnsTrueWhenBackendReports)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     EXPECT_CALL(*mock, IsAvailable()).WillOnce(Return(true));
@@ -107,7 +107,7 @@ TEST(VehicleClockTest, IsAvailableReturnsTrueWhenBackendReports)
 
 TEST(VehicleClockTest, IsAvailableReturnsFalseWhenBackendUnavailable)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     EXPECT_CALL(*mock, IsAvailable()).WillOnce(Return(false));
@@ -117,7 +117,7 @@ TEST(VehicleClockTest, IsAvailableReturnsFalseWhenBackendUnavailable)
 
 TEST(VehicleClockTest, WaitUntilAvailableForwardsTokenAndDeadlineToBackend)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     score::cpp::stop_source source;
@@ -130,7 +130,7 @@ TEST(VehicleClockTest, WaitUntilAvailableForwardsTokenAndDeadlineToBackend)
 
 TEST(VehicleClockTest, SubscribeTimeSlaveSyncDataCapturesAndInvokesCallback)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     VehicleTime::TimeSlaveSyncDataReceivedCallback captured_cb;
@@ -151,7 +151,7 @@ TEST(VehicleClockTest, SubscribeTimeSlaveSyncDataCapturesAndInvokesCallback)
 
 TEST(VehicleClockTest, UnsubscribeTimeSlaveSyncDataForwardsToBackend)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     EXPECT_CALL(*mock, UnsetTimeSlaveSyncDataReceivedCallback()).Times(1);
@@ -161,7 +161,7 @@ TEST(VehicleClockTest, UnsubscribeTimeSlaveSyncDataForwardsToBackend)
 
 TEST(VehicleClockTest, SubscribePDelayMeasurementDataCapturesAndInvokesCallback)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     VehicleTime::PDelayMeasurementFinishedCallback captured_cb;
@@ -182,7 +182,7 @@ TEST(VehicleClockTest, SubscribePDelayMeasurementDataCapturesAndInvokesCallback)
 
 TEST(VehicleClockTest, UnsubscribePDelayMeasurementDataForwardsToBackend)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     EXPECT_CALL(*mock, UnsetPDelayMeasurementFinishedCallback()).Times(1);
@@ -199,7 +199,7 @@ TEST(VehicleClockTest, VehicleTimeStatusFlagValues)
 
 TEST(VehicleClockTest, ScopedClockOverrideInjectsMockIntoSut)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
 
     const VehicleTime::Timepoint expected_tp{std::chrono::nanoseconds{999LL}};
@@ -215,7 +215,7 @@ TEST(VehicleClockTest, ScopedClockOverrideInjectsMockIntoSut)
 
 TEST(VehicleClockTest, ScopedClockOverrideRestoresBackendAfterScope)
 {
-    auto mock = std::make_shared<VehicleClockMock>();
+    auto mock = std::make_shared<VehicleClockBackendMock>();
     {
         test_utils::ScopedClockOverride<VehicleTime> guard{mock};
         EXPECT_CALL(*mock, IsAvailable()).WillOnce(Return(false));
@@ -223,7 +223,7 @@ TEST(VehicleClockTest, ScopedClockOverrideRestoresBackendAfterScope)
     }
     // After guard goes out of scope, override is cleared.
     // A new guard for the same Tag must succeed without assertion.
-    auto mock2 = std::make_shared<VehicleClockMock>();
+    auto mock2 = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard2{mock2};
     EXPECT_CALL(*mock2, IsAvailable()).WillOnce(Return(true));
     EXPECT_TRUE(VehicleClock::GetInstance().IsAvailable());

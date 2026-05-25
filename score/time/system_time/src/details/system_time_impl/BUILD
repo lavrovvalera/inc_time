@@ -18,14 +18,13 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 # Link this target (via //score/time/system_time:system_time) into production binaries.
 cc_library(
     name = "system_time_impl",
-    srcs = ["system_clock_impl.cpp"],
-    hdrs = ["system_clock_impl.h"],
+    srcs = ["system_clock_backend_impl.cpp"],
+    hdrs = ["system_clock_backend_impl.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//score/time/system_time:__subpackages__"],
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/system_time/src:system_clock",
-        "//score/time/system_time/src:system_clock_iface",
     ],
 )
 
@@ -33,8 +32,8 @@ cc_test(
     name = "system_clock_impl_test",
     testonly = True,
     srcs = [
-        "system_clock_impl.cpp",
-        "system_clock_impl.h",
+        "system_clock_backend_impl.cpp",
+        "system_clock_backend_impl.h",
         "system_clock_impl_test.cpp",
     ],
     features = COMPILER_WARNING_FEATURES,
@@ -42,7 +41,6 @@ cc_test(
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/system_time/src:system_clock",
-        "//score/time/system_time/src:system_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

@@ -10,30 +10,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_IFACE_H
-#define SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_IFACE_H
+#include "score/time/steady_time/src/details/stub_impl/steady_clock_backend_impl.h"
+#include "score/time/steady_time/src/steady_clock.h"
 
-#include "score/time/hpls_time/src/hpls_time.h"
-#include "score/time/clock/src/clock_snapshot.h"
-#include "score/time/clock/src/no_status.h"
+#include <memory>
 
 namespace score
 {
 namespace time
 {
 
-///
-/// \brief Pure-virtual pimpl interface for the HPLSC time domain backend.
-class HplsClockIface
+template <>
+std::shared_ptr<SteadyClockBackend> detail::CreateBackend<std::chrono::steady_clock>()
 {
-  public:
-    virtual ~HplsClockIface() noexcept = default;
-
-    /// \brief Returns the current HPLSC snapshot (time-point; status is NoStatus).
-    virtual ClockSnapshot<HplsTime::Timepoint, NoStatus> Now() const noexcept = 0;
-};
+    return std::make_shared<detail::SteadyClockBackendImpl>();
+}
 
 }  // namespace time
 }  // namespace score
-
-#endif  // SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_IFACE_H

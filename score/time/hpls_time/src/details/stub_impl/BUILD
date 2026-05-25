@@ -18,13 +18,12 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 cc_library(
     name = "stub_impl",
     testonly = True,
-    srcs = ["hpls_clock_impl.cpp"],
-    hdrs = ["hpls_clock_impl.h"],
+    srcs = ["hpls_clock_backend_impl.cpp"],
+    hdrs = ["hpls_clock_backend_impl.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//score/time/hpls_time:__subpackages__"],
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/hpls_time/src:hpls_clock",
-        "//score/time/hpls_time/src:hpls_clock_iface",
     ],
 )

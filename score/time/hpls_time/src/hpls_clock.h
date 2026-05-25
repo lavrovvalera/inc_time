@@ -24,12 +24,12 @@ namespace score
 namespace time
 {
 
-class HplsClockIface;
+class HplsClockBackend;
 
 template <>
 struct ClockTraits<HplsTime>
 {
-    using Backend        = HplsClockIface;
+    using Backend        = HplsClockBackend;
     using Duration       = HplsTime::Duration;
     using Timepoint      = HplsTime::Timepoint;
     using Snapshot       = ClockSnapshot<Timepoint, NoStatus>;

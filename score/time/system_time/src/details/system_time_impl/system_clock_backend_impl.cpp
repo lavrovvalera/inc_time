@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/system_time/src/details/stub_impl/system_clock_impl.h"
+#include "score/time/system_time/src/details/system_time_impl/system_clock_backend_impl.h"
 #include "score/time/system_time/src/system_clock.h"
 
 #include <memory>
@@ -21,9 +21,9 @@ namespace time
 {
 
 template <>
-std::shared_ptr<SystemClockIface> detail::CreateBackend<std::chrono::system_clock>()
+std::shared_ptr<SystemClockBackend> detail::CreateBackend<std::chrono::system_clock>()
 {
-    return std::make_shared<detail::SystemClockImpl>();
+    return std::make_shared<detail::SystemClockBackendImpl>();
 }
 
 }  // namespace time

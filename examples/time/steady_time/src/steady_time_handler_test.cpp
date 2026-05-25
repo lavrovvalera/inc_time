@@ -12,7 +12,7 @@
  ********************************************************************************/
 #include "examples/time/steady_time/src/steady_time_handler.h"
 
-#include "score/time/steady_time/src/steady_clock_mock.h"
+#include "score/time/steady_time/src/steady_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_snapshot.h"
 #include "score/time/clock/src/no_status.h"
@@ -38,12 +38,12 @@ class SteadyTimeHandlerTest : public ::testing::Test
 {
   protected:
     SteadyTimeHandlerTest()
-        : mock_{std::make_shared<score::time::SteadyClockMock>()}
+        : mock_{std::make_shared<score::time::SteadyClockBackendMock>()}
         , guard_{mock_}
     {
     }
 
-    std::shared_ptr<score::time::SteadyClockMock>                   mock_;
+    std::shared_ptr<score::time::SteadyClockBackendMock>                   mock_;
     score::time::test_utils::ScopedClockOverride<std::chrono::steady_clock>       guard_;
 };
 

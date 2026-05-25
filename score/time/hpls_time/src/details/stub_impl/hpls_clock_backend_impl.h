@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_IMPL_H
-#define SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_IMPL_H
+#ifndef SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_BACKEND_IMPL_H
+#define SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_BACKEND_IMPL_H
 
-// Internal header — include ONLY from stub_impl/hpls_clock_impl.cpp.
+// Internal header — include ONLY from stub_impl/hpls_clock_backend_impl.cpp.
 
-#include "score/time/hpls_time/src/hpls_clock_iface.h"
+#include "score/time/hpls_time/src/hpls_clock_backend.h"
 #include "score/time/clock/src/no_status.h"
 
 #include <chrono>
@@ -31,15 +31,15 @@ namespace detail
 ///
 /// Wraps std::chrono::steady_clock so that Clock<HplsTime>::GetInstance()
 /// resolves at link time even when ScopedClockOverride is not active.
-class HplsClockImpl final : public HplsClockIface
+class HplsClockBackendImpl final : public HplsClockBackend
 {
   public:
-    HplsClockImpl() noexcept                           = default;
-    ~HplsClockImpl() noexcept override                 = default;
-    HplsClockImpl(const HplsClockImpl&)                = delete;
-    HplsClockImpl& operator=(const HplsClockImpl&)     = delete;
-    HplsClockImpl(HplsClockImpl&&)                     = delete;
-    HplsClockImpl& operator=(HplsClockImpl&&)          = delete;
+    HplsClockBackendImpl() noexcept                           = default;
+    ~HplsClockBackendImpl() noexcept override                 = default;
+    HplsClockBackendImpl(const HplsClockBackendImpl&)                = delete;
+    HplsClockBackendImpl& operator=(const HplsClockBackendImpl&)     = delete;
+    HplsClockBackendImpl(HplsClockBackendImpl&&)                     = delete;
+    HplsClockBackendImpl& operator=(HplsClockBackendImpl&&)          = delete;
 
     ClockSnapshot<HplsTime::Timepoint, NoStatus> Now() const noexcept override
     {
@@ -53,4 +53,4 @@ class HplsClockImpl final : public HplsClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_IMPL_H
+#endif  // SCORE_TIME_HPLS_TIME_SRC_DETAILS_STUB_IMPL_HPLS_CLOCK_BACKEND_IMPL_H

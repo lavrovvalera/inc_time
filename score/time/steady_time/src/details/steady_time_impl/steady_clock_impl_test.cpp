@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/steady_time/src/details/steady_time_impl/steady_clock_impl.h"
+#include "score/time/steady_time/src/details/steady_time_impl/steady_clock_backend_impl.h"
 
 #include <gtest/gtest.h>
 
@@ -25,21 +25,21 @@ namespace detail
 namespace test
 {
 
-class SteadyClockImplTest : public ::testing::Test
+class SteadyClockBackendImplTest : public ::testing::Test
 {
 };
 
-TEST_F(SteadyClockImplTest, NowReturnsNonNegativeTimePoint)
+TEST_F(SteadyClockBackendImplTest, NowReturnsNonNegativeTimePoint)
 {
-    SteadyClockImpl clock;
+    SteadyClockBackendImpl clock;
     const auto snapshot = clock.Now();
 
     EXPECT_GE(snapshot.TimePointNs().count(), 0);
 }
 
-TEST_F(SteadyClockImplTest, NowIsMonotonicallyIncreasing)
+TEST_F(SteadyClockBackendImplTest, NowIsMonotonicallyIncreasing)
 {
-    SteadyClockImpl clock;
+    SteadyClockBackendImpl clock;
     const auto first = clock.Now();
 
     std::this_thread::sleep_for(std::chrono::milliseconds{10});
@@ -47,9 +47,9 @@ TEST_F(SteadyClockImplTest, NowIsMonotonicallyIncreasing)
     EXPECT_GT(clock.Now().TimePoint(), first.TimePoint());
 }
 
-TEST_F(SteadyClockImplTest, NowSnapshotCarriesNoStatus)
+TEST_F(SteadyClockBackendImplTest, NowSnapshotCarriesNoStatus)
 {
-    SteadyClockImpl clock;
+    SteadyClockBackendImpl clock;
     const auto snapshot = clock.Now();
 
     // NoStatus is an empty struct — verify it is accessible (compile + link check).

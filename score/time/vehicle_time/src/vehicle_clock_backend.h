@@ -10,8 +10,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_IFACE_H
-#define SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_IFACE_H
+#ifndef SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_BACKEND_H
+#define SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_BACKEND_H
 
 #include "score/time/vehicle_time/src/vehicle_time.h"
 #include "score/time/clock/src/clock_snapshot.h"
@@ -31,10 +31,10 @@ namespace time
 /// INTERNAL — must not be included by user code.
 /// Consumers: test mocks and backend implementations under details/.
 ///
-class VehicleClockIface
+class VehicleClockBackend
 {
   public:
-    virtual ~VehicleClockIface() noexcept = default;
+    virtual ~VehicleClockBackend() noexcept = default;
 
     /// \brief Returns the current vehicle time snapshot (time-point + quality status).
     virtual ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> Now() const noexcept = 0;
@@ -69,4 +69,4 @@ class VehicleClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_IFACE_H
+#endif  // SCORE_TIME_VEHICLE_TIME_SRC_VEHICLE_CLOCK_BACKEND_H

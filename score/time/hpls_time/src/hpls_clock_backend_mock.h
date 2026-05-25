@@ -10,10 +10,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_MOCK_H
-#define SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_MOCK_H
+#ifndef SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_BACKEND_MOCK_H
+#define SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_BACKEND_MOCK_H
 
-#include "score/time/hpls_time/src/hpls_clock_iface.h"
+#include "score/time/hpls_time/src/hpls_clock_backend.h"
 #include "score/time/hpls_time/src/hpls_clock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_test_factory.h"
@@ -27,12 +27,12 @@ namespace time
 
 /// @brief GMock test double for the HPLS clock domain.
 ///
-/// Implements @c HplsClockIface so it can be injected via
+/// Implements @c HplsClockBackend so it can be injected via
 /// @c test_utils::ScopedClockOverride<HplsTime> or @c test_utils::ClockTestFactory<HplsTime> in unit tests.
 ///
 /// Constructor injection (preferred — no global state):
 /// @code
-///   auto mock  = std::make_shared<HplsClockMock>();
+///   auto mock  = std::make_shared<HplsClockBackendMock>();
 ///   auto clock = test_utils::ClockTestFactory<HplsTime>::Make(mock);
 ///   MyComponent component{clock};
 ///   EXPECT_CALL(*mock, Now()).WillOnce(Return(...));
@@ -40,20 +40,20 @@ namespace time
 ///
 /// Scope-bound override (when SUT calls @c GetInstance() internally):
 /// @code
-///   auto mock = std::make_shared<HplsClockMock>();
+///   auto mock = std::make_shared<HplsClockBackendMock>();
 ///   test_utils::ScopedClockOverride<HplsTime> guard{mock};
 ///   MySvc svc{};
 ///   EXPECT_CALL(*mock, Now()).WillOnce(Return(...));
 /// @endcode
-class HplsClockMock : public HplsClockIface
+class HplsClockBackendMock : public HplsClockBackend
 {
   public:
-    HplsClockMock()                                    = default;
-    ~HplsClockMock() noexcept override                 = default;
-    HplsClockMock(const HplsClockMock&)                = delete;
-    HplsClockMock& operator=(const HplsClockMock&)     = delete;
-    HplsClockMock(HplsClockMock&&)                     = delete;
-    HplsClockMock& operator=(HplsClockMock&&)          = delete;
+    HplsClockBackendMock()                                    = default;
+    ~HplsClockBackendMock() noexcept override                 = default;
+    HplsClockBackendMock(const HplsClockBackendMock&)                = delete;
+    HplsClockBackendMock& operator=(const HplsClockBackendMock&)     = delete;
+    HplsClockBackendMock(HplsClockBackendMock&&)                     = delete;
+    HplsClockBackendMock& operator=(HplsClockBackendMock&&)          = delete;
 
     MOCK_METHOD((ClockSnapshot<HplsTime::Timepoint, NoStatus>),
                 Now,
@@ -64,4 +64,4 @@ class HplsClockMock : public HplsClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_MOCK_H
+#endif  // SCORE_TIME_HPLS_TIME_SRC_HPLS_CLOCK_BACKEND_MOCK_H

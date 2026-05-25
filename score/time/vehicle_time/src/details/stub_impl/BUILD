@@ -16,12 +16,11 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 cc_library(
     name = "stub_impl",
     testonly = True,
-    srcs = ["vehicle_clock_impl.cpp"],
-    hdrs = ["vehicle_clock_impl.h"],
+    srcs = ["vehicle_clock_backend_impl.cpp"],
+    hdrs = ["vehicle_clock_backend_impl.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//score/time/vehicle_time:__subpackages__"],
     deps = [
         "//score/time/vehicle_time/src:vehicle_clock",
-        "//score/time/vehicle_time/src:vehicle_clock_iface",
     ],
 )

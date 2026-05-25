@@ -10,13 +10,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_IMPL_H
-#define SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_IMPL_H
+#ifndef SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H
+#define SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H
 
-// Internal header — include ONLY from vehicle_clock_impl.cpp and vehicle_clock_impl_test.cpp.
+// Internal header — include ONLY from vehicle_clock_backend_impl.cpp and vehicle_clock_impl_test.cpp.
 // NOT part of the public API of td_impl.
 
-#include "score/time/vehicle_time/src/vehicle_clock_iface.h"
+#include "score/time/vehicle_time/src/vehicle_clock_backend.h"
 #include "score/time/vehicle_time/src/vehicle_clock.h"
 #include "score/time/hpls_time/src/hpls_clock.h"
 #include "score/TimeDaemon/code/ipc/svt/receiver/svt_receiver.h"
@@ -36,7 +36,7 @@ namespace detail
 
 /// @brief Production backend for the vehicle time domain.
 ///
-/// Implements @c VehicleClockIface by reading live PTP data from the TimeDaemon
+/// Implements @c VehicleClockBackend by reading live PTP data from the TimeDaemon
 /// via @c score::td::SvtReceiver.  The adjusted vehicle time is computed as:
 ///
 ///   adjusted_ptp = ptp_stamp_at_capture + (local_now - local_at_capture)
@@ -50,17 +50,17 @@ namespace detail
 /// @note Placed in @c score::time::detail (rather than an anonymous namespace) so
 /// that vehicle_clock_impl_test.cpp can construct it directly with injected mocks.
 /// Only one backend translation unit must be linked per binary to avoid ODR issues.
-class VehicleClockImpl final : public VehicleClockIface
+class VehicleClockBackendImpl final : public VehicleClockBackend
 {
   public:
-    VehicleClockImpl(std::shared_ptr<score::td::SvtReceiver> receiver,
+    VehicleClockBackendImpl(std::shared_ptr<score::td::SvtReceiver> receiver,
                      HplsClock                               local_clock) noexcept;
 
-    ~VehicleClockImpl() noexcept override                    = default;
-    VehicleClockImpl(const VehicleClockImpl&)                = delete;
-    VehicleClockImpl& operator=(const VehicleClockImpl&)     = delete;
-    VehicleClockImpl(VehicleClockImpl&&)                     = delete;
-    VehicleClockImpl& operator=(VehicleClockImpl&&)          = delete;
+    ~VehicleClockBackendImpl() noexcept override                    = default;
+    VehicleClockBackendImpl(const VehicleClockBackendImpl&)                = delete;
+    VehicleClockBackendImpl& operator=(const VehicleClockBackendImpl&)     = delete;
+    VehicleClockBackendImpl(VehicleClockBackendImpl&&)                     = delete;
+    VehicleClockBackendImpl& operator=(VehicleClockBackendImpl&&)          = delete;
 
     ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> Now() const noexcept override;
 
@@ -94,4 +94,4 @@ class VehicleClockImpl final : public VehicleClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_IMPL_H
+#endif  // SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_TD_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H

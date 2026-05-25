@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_IMPL_H
-#define SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_IMPL_H
+#ifndef SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_BACKEND_IMPL_H
+#define SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_BACKEND_IMPL_H
 
-// Internal header — include ONLY from stub_impl/system_clock_impl.cpp.
+// Internal header — include ONLY from stub_impl/system_clock_backend_impl.cpp.
 
-#include "score/time/system_time/src/system_clock_iface.h"
+#include "score/time/system_time/src/system_clock_backend.h"
 #include "score/time/clock/src/no_status.h"
 
 #include <chrono>
@@ -31,15 +31,15 @@ namespace detail
 ///
 /// Returns a default-constructed (epoch-zero) snapshot for all calls so that
 /// tests without an active ScopedClockOverride get a deterministic, safe value.
-class SystemClockImpl final : public SystemClockIface
+class SystemClockBackendImpl final : public SystemClockBackend
 {
   public:
-    SystemClockImpl() noexcept                           = default;
-    ~SystemClockImpl() noexcept override                 = default;
-    SystemClockImpl(const SystemClockImpl&)              = delete;
-    SystemClockImpl& operator=(const SystemClockImpl&)   = delete;
-    SystemClockImpl(SystemClockImpl&&)                   = delete;
-    SystemClockImpl& operator=(SystemClockImpl&&)        = delete;
+    SystemClockBackendImpl() noexcept                           = default;
+    ~SystemClockBackendImpl() noexcept override                 = default;
+    SystemClockBackendImpl(const SystemClockBackendImpl&)              = delete;
+    SystemClockBackendImpl& operator=(const SystemClockBackendImpl&)   = delete;
+    SystemClockBackendImpl(SystemClockBackendImpl&&)                   = delete;
+    SystemClockBackendImpl& operator=(SystemClockBackendImpl&&)        = delete;
 
     ClockSnapshot<std::chrono::system_clock::time_point, NoStatus> Now() const noexcept override
     {
@@ -51,4 +51,4 @@ class SystemClockImpl final : public SystemClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_IMPL_H
+#endif  // SCORE_TIME_SYSTEM_TIME_SRC_DETAILS_STUB_IMPL_SYSTEM_CLOCK_BACKEND_IMPL_H

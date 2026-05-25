@@ -10,10 +10,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_HPLS_TIME_SRC_DETAILS_QTIME_HPLS_QCLOCK_H
-#define SCORE_TIME_HPLS_TIME_SRC_DETAILS_QTIME_HPLS_QCLOCK_H
+#ifndef SCORE_TIME_HPLS_TIME_SRC_DETAILS_QTIME_HPLS_QCLOCK_IMPL_H
+#define SCORE_TIME_HPLS_TIME_SRC_DETAILS_QTIME_HPLS_QCLOCK_IMPL_H
 
-#include "score/time/hpls_time/src/hpls_clock_iface.h"
+#include "score/time/hpls_time/src/hpls_clock_backend.h"
 #include "score/time/clock/src/no_status.h"
 
 #include <cstdint>
@@ -33,7 +33,7 @@ namespace qtime
 /// Reads the current time from the QNX hardware clock via @c Neutrino::ClockCycles()
 /// and converts the raw cycle count to nanoseconds using @c GetClockCyclesPerSec().
 ///
-class HplsQClock final : public HplsClockIface
+class HplsQClock final : public HplsClockBackend
 {
   public:
     HplsQClock() noexcept                          = default;

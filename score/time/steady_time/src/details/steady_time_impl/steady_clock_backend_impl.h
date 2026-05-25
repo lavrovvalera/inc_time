@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_IMPL_H
-#define SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_IMPL_H
+#ifndef SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_BACKEND_IMPL_H
+#define SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_BACKEND_IMPL_H
 
-// Internal header — include ONLY from steady_time_impl/steady_clock_impl.cpp.
+// Internal header — include ONLY from steady_time_impl/steady_clock_backend_impl.cpp.
 
-#include "score/time/steady_time/src/steady_clock_iface.h"
+#include "score/time/steady_time/src/steady_clock_backend.h"
 #include "score/time/clock/src/no_status.h"
 
 #include <chrono>
@@ -30,15 +30,15 @@ namespace detail
 /// @brief Production backend for the steady-clock domain.
 ///
 /// Delegates directly to std::chrono::steady_clock::now().
-class SteadyClockImpl final : public SteadyClockIface
+class SteadyClockBackendImpl final : public SteadyClockBackend
 {
   public:
-    SteadyClockImpl() noexcept                           = default;
-    ~SteadyClockImpl() noexcept override                 = default;
-    SteadyClockImpl(const SteadyClockImpl&)              = delete;
-    SteadyClockImpl& operator=(const SteadyClockImpl&)   = delete;
-    SteadyClockImpl(SteadyClockImpl&&)                   = delete;
-    SteadyClockImpl& operator=(SteadyClockImpl&&)        = delete;
+    SteadyClockBackendImpl() noexcept                           = default;
+    ~SteadyClockBackendImpl() noexcept override                 = default;
+    SteadyClockBackendImpl(const SteadyClockBackendImpl&)              = delete;
+    SteadyClockBackendImpl& operator=(const SteadyClockBackendImpl&)   = delete;
+    SteadyClockBackendImpl(SteadyClockBackendImpl&&)                   = delete;
+    SteadyClockBackendImpl& operator=(SteadyClockBackendImpl&&)        = delete;
 
     ClockSnapshot<std::chrono::steady_clock::time_point, NoStatus> Now() const noexcept override
     {
@@ -51,4 +51,4 @@ class SteadyClockImpl final : public SteadyClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_IMPL_H
+#endif  // SCORE_TIME_STEADY_TIME_SRC_DETAILS_STEADY_TIME_IMPL_STEADY_CLOCK_BACKEND_IMPL_H

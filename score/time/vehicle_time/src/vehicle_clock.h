@@ -30,12 +30,12 @@ namespace score
 namespace time
 {
 
-class VehicleClockIface;
+class VehicleClockBackend;
 
 template <>
 struct ClockTraits<VehicleTime>
 {
-    using Backend        = VehicleClockIface;
+    using Backend        = VehicleClockBackend;
     using Duration       = VehicleTime::Duration;
     using Timepoint      = VehicleTime::Timepoint;
     using Snapshot       = ClockSnapshot<Timepoint, VehicleTimeStatus>;

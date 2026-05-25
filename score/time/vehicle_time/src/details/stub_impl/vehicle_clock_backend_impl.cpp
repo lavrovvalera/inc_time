@@ -10,36 +10,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_STEADY_TIME_SRC_STEADY_CLOCK_IFACE_H
-#define SCORE_TIME_STEADY_TIME_SRC_STEADY_CLOCK_IFACE_H
+#include "score/time/vehicle_time/src/details/stub_impl/vehicle_clock_backend_impl.h"
+#include "score/time/vehicle_time/src/vehicle_clock.h"
 
-#include "score/time/clock/src/clock_snapshot.h"
-#include "score/time/clock/src/no_status.h"
-
-#include <score/stop_token.hpp>
-
-#include <chrono>
+#include <memory>
 
 namespace score
 {
 namespace time
 {
 
-///
-/// \brief Abstract backend interface for the steady-clock domain.
-///
-class SteadyClockIface
+template <>
+std::shared_ptr<VehicleClockBackend> detail::CreateBackend<VehicleTime>()
 {
-  public:
-    virtual ~SteadyClockIface() noexcept = default;
-
-    /// \brief Returns the current steady-clock snapshot.
-    virtual ClockSnapshot<std::chrono::steady_clock::time_point, NoStatus>
-    Now() const noexcept = 0;
-
-};
+    return std::make_shared<detail::VehicleClockBackendImpl>();
+}
 
 }  // namespace time
 }  // namespace score
-
-#endif  // SCORE_TIME_STEADY_TIME_SRC_STEADY_CLOCK_IFACE_H

@@ -13,7 +13,7 @@
 #ifndef SCORE_TIME_HPLS_TIME_SRC_DETAILS_SYSTEM_CLOCK_HPLS_TIME_IMPL_H
 #define SCORE_TIME_HPLS_TIME_SRC_DETAILS_SYSTEM_CLOCK_HPLS_TIME_IMPL_H
 
-#include "score/time/hpls_time/src/hpls_clock_iface.h"
+#include "score/time/hpls_time/src/hpls_clock_backend.h"
 #include "score/time/clock/src/no_status.h"
 
 namespace score
@@ -31,7 +31,7 @@ namespace sys_time
 /// Reads the current time from @c std::chrono::high_resolution_clock and
 /// converts it to an @c HplsTime::Timepoint.
 ///
-class HplsTimeImpl final : public HplsClockIface
+class HplsTimeImpl final : public HplsClockBackend
 {
   public:
     HplsTimeImpl() noexcept;

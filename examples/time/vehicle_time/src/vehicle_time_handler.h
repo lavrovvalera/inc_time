@@ -54,8 +54,8 @@ struct TimeReport
 ///
 /// @par Testing pattern
 /// @code
-///   auto vehicle_mock = std::make_shared<score::time::VehicleClockMock>();
-///   auto hpls_mock    = std::make_shared<score::time::HplsClockMock>();
+///   auto vehicle_mock = std::make_shared<score::time::VehicleClockBackendMock>();
+///   auto hpls_mock    = std::make_shared<score::time::HplsClockBackendMock>();
 ///   score::time::test_utils::ScopedClockOverride<score::time::VehicleTime> vg{vehicle_mock};
 ///   score::time::test_utils::ScopedClockOverride<score::time::HplsTime>    hg{hpls_mock};
 ///   EXPECT_CALL(*vehicle_mock, Now()).WillOnce(Return(...));

@@ -19,13 +19,12 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 cc_library(
     name = "stub_impl",
     testonly = True,
-    srcs = ["system_clock_impl.cpp"],
-    hdrs = ["system_clock_impl.h"],
+    srcs = ["system_clock_backend_impl.cpp"],
+    hdrs = ["system_clock_backend_impl.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//score/time/system_time:__subpackages__"],
     deps = [
         "//score/time/clock:clock_core",
         "//score/time/system_time/src:system_clock",
-        "//score/time/system_time/src:system_clock_iface",
     ],
 )

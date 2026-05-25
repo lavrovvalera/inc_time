@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 #include "score/time/vehicle_time/src/vehicle_clock.h"
-#include "score/time/vehicle_time/src/vehicle_clock_iface.h"
+#include "score/time/vehicle_time/src/vehicle_clock_backend.h"
 
 #include <utility>
 

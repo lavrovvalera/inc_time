@@ -12,7 +12,7 @@
  ********************************************************************************/
 #include "examples/time/system_time/src/system_time_handler.h"
 
-#include "score/time/system_time/src/system_clock_mock.h"
+#include "score/time/system_time/src/system_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_snapshot.h"
 #include "score/time/clock/src/no_status.h"
@@ -38,12 +38,12 @@ class SystemTimeHandlerTest : public ::testing::Test
 {
   protected:
     SystemTimeHandlerTest()
-        : mock_{std::make_shared<score::time::SystemClockMock>()}
+        : mock_{std::make_shared<score::time::SystemClockBackendMock>()}
         , guard_{mock_}
     {
     }
 
-    std::shared_ptr<score::time::SystemClockMock>                   mock_;
+    std::shared_ptr<score::time::SystemClockBackendMock>                   mock_;
     score::time::test_utils::ScopedClockOverride<std::chrono::system_clock>      guard_;
 };
 

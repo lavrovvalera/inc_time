@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 #include "score/time/hpls_time/src/hpls_clock.h"
-#include "score/time/hpls_time/src/hpls_clock_iface.h"
+#include "score/time/hpls_time/src/hpls_clock_backend.h"
 
 namespace score
 {

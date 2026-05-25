@@ -12,7 +12,7 @@
  ********************************************************************************/
 #include "score/time_daemon/src/verification_machine/svt/validators/time_jumps_validator.h"
 
-#include "score/time/hpls_time/src/hpls_clock_mock.h"
+#include "score/time/hpls_time/src/hpls_clock_backend_mock.h"
 
 #include "gmock/gmock.h"
 #include <gtest/gtest.h>
@@ -61,7 +61,7 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST_P(TimeJumpsValidatorParamTest, ValidationTest)
 {
-    auto mock = std::make_shared<score::time::HplsClockMock>();
+    auto mock = std::make_shared<score::time::HplsClockBackendMock>();
 
     TimeJumpsValidator validator(
         score::time::test_utils::ClockTestFactory<score::time::HplsTime>::Make(mock),

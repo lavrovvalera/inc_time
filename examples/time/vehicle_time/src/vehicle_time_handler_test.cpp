@@ -12,8 +12,8 @@
  ********************************************************************************/
 #include "examples/time/vehicle_time/src/vehicle_time_handler.h"
 
-#include "score/time/vehicle_time/src/vehicle_clock_mock.h"
-#include "score/time/hpls_time/src/hpls_clock_mock.h"
+#include "score/time/vehicle_time/src/vehicle_clock_backend_mock.h"
+#include "score/time/hpls_time/src/hpls_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_snapshot.h"
 
@@ -43,15 +43,15 @@ class VehicleTimeHandlerTest : public ::testing::Test
 {
   protected:
     VehicleTimeHandlerTest()
-        : vehicle_mock_{std::make_shared<score::time::VehicleClockMock>()}
-        , hpls_mock_{std::make_shared<score::time::HplsClockMock>()}
+        : vehicle_mock_{std::make_shared<score::time::VehicleClockBackendMock>()}
+        , hpls_mock_{std::make_shared<score::time::HplsClockBackendMock>()}
         , vehicle_guard_{vehicle_mock_}
         , hpls_guard_{hpls_mock_}
     {
     }
 
-    std::shared_ptr<score::time::VehicleClockMock> vehicle_mock_;
-    std::shared_ptr<score::time::HplsClockMock>    hpls_mock_;
+    std::shared_ptr<score::time::VehicleClockBackendMock> vehicle_mock_;
+    std::shared_ptr<score::time::HplsClockBackendMock>    hpls_mock_;
     score::time::test_utils::ScopedClockOverride<score::time::VehicleTime>  vehicle_guard_;
     score::time::test_utils::ScopedClockOverride<score::time::HplsTime>     hpls_guard_;
 };

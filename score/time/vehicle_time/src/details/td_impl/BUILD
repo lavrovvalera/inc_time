@@ -20,17 +20,16 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 cc_library(
     name = "td_impl",
     srcs = [
-        "vehicle_clock_impl.cpp",
+        "vehicle_clock_backend_impl.cpp",
         "//score/time/vehicle_time/src/details:logging_contexts",  # internal header
     ],
-    hdrs = ["vehicle_clock_impl.h"],
+    hdrs = ["vehicle_clock_backend_impl.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//score/time/vehicle_time:__subpackages__"],
     deps = [
         "//score/TimeDaemon/code/ipc:svt_receiver",
         "//score/time/hpls_time/src:hpls_clock",
         "//score/time/vehicle_time/src:vehicle_clock",
-        "//score/time/vehicle_time/src:vehicle_clock_iface",
         "@score_baselibs//score/mw/log:frontend",
     ],
 )
@@ -38,8 +37,8 @@ cc_library(
 cc_test(
     name = "vehicle_clock_impl_test",
     srcs = [
-        "vehicle_clock_impl.cpp",
-        "vehicle_clock_impl.h",
+        "vehicle_clock_backend_impl.cpp",
+        "vehicle_clock_backend_impl.h",
         "vehicle_clock_impl_test.cpp",
         "//score/time/vehicle_time/src/details:logging_contexts",  # internal header
     ],
@@ -49,7 +48,6 @@ cc_test(
         "//score/TimeDaemon/code/ipc:svt_receiver_mock",
         "//score/time/hpls_time:hpls_time_mock",
         "//score/time/vehicle_time/src:vehicle_clock",
-        "//score/time/vehicle_time/src:vehicle_clock_iface",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/language/safecpp/coverage_termination_handler",

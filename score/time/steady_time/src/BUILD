@@ -15,9 +15,14 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
-    name = "steady_clock_iface",
-    hdrs = ["steady_clock_iface.h"],
+    name = "steady_clock",
+    srcs = ["steady_clock.cpp"],
+    hdrs = [
+        "steady_clock.h",
+        "steady_clock_backend.h",
+    ],
     features = COMPILER_WARNING_FEATURES,
+    tags = ["FFI"],
     visibility = ["//score/time:__subpackages__"],
     deps = [
         "//score/time/clock:clock_core",
@@ -26,27 +31,13 @@ cc_library(
 )
 
 cc_library(
-    name = "steady_clock",
-    srcs = ["steady_clock.cpp"],
-    hdrs = ["steady_clock.h"],
-    features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
-    deps = [
-        ":steady_clock_iface",
-        "//score/time/clock:clock_core",
-    ],
-)
-
-cc_library(
     name = "steady_clock_mock",
     testonly = True,
-    hdrs = ["steady_clock_mock.h"],
+    hdrs = ["steady_clock_backend_mock.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//visibility:public"],
     deps = [
         ":steady_clock",
-        ":steady_clock_iface",
         "//score/time/clock:clock_test_utils",
         "//score/time/steady_time/src/details/stub_impl",
         "@googletest//:gtest",

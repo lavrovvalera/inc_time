@@ -15,9 +15,14 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
-    name = "system_clock_iface",
-    hdrs = ["system_clock_iface.h"],
+    name = "system_clock",
+    srcs = ["system_clock.cpp"],
+    hdrs = [
+        "system_clock.h",
+        "system_clock_backend.h",
+    ],
     features = COMPILER_WARNING_FEATURES,
+    tags = ["FFI"],
     visibility = ["//score/time:__subpackages__"],
     deps = [
         "//score/time/clock:clock_core",
@@ -26,27 +31,13 @@ cc_library(
 )
 
 cc_library(
-    name = "system_clock",
-    srcs = ["system_clock.cpp"],
-    hdrs = ["system_clock.h"],
-    features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
-    deps = [
-        ":system_clock_iface",
-        "//score/time/clock:clock_core",
-    ],
-)
-
-cc_library(
     name = "system_clock_mock",
     testonly = True,
-    hdrs = ["system_clock_mock.h"],
+    hdrs = ["system_clock_backend_mock.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//visibility:public"],
     deps = [
         ":system_clock",
-        ":system_clock_iface",
         "//score/time/clock:clock_test_utils",
         "//score/time/system_time/src/details/stub_impl",
         "@googletest//:gtest",

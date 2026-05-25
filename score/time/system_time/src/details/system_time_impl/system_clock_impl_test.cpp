@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/system_time/src/details/system_time_impl/system_clock_impl.h"
+#include "score/time/system_time/src/details/system_time_impl/system_clock_backend_impl.h"
 
 #include <gtest/gtest.h>
 
@@ -25,13 +25,13 @@ namespace detail
 namespace test
 {
 
-class SystemClockImplTest : public ::testing::Test
+class SystemClockBackendImplTest : public ::testing::Test
 {
 };
 
-TEST_F(SystemClockImplTest, NowReturnsPositiveUnixEpochTime)
+TEST_F(SystemClockBackendImplTest, NowReturnsPositiveUnixEpochTime)
 {
-    SystemClockImpl clock;
+    SystemClockBackendImpl clock;
     const auto snapshot = clock.Now();
 
     // Any timestamp after 2000-01-01 00:00:00 UTC (946684800 s) is valid.
@@ -39,9 +39,9 @@ TEST_F(SystemClockImplTest, NowReturnsPositiveUnixEpochTime)
     EXPECT_GT(snapshot.TimePointNs().count(), kYear2000Ns);
 }
 
-TEST_F(SystemClockImplTest, NowIsMonotonicallyIncreasing)
+TEST_F(SystemClockBackendImplTest, NowIsMonotonicallyIncreasing)
 {
-    SystemClockImpl clock;
+    SystemClockBackendImpl clock;
     const auto first = clock.Now();
 
     std::this_thread::sleep_for(std::chrono::milliseconds{10});
@@ -49,9 +49,9 @@ TEST_F(SystemClockImplTest, NowIsMonotonicallyIncreasing)
     EXPECT_GT(clock.Now().TimePoint(), first.TimePoint());
 }
 
-TEST_F(SystemClockImplTest, NowSnapshotCarriesNoStatus)
+TEST_F(SystemClockBackendImplTest, NowSnapshotCarriesNoStatus)
 {
-    SystemClockImpl clock;
+    SystemClockBackendImpl clock;
     const auto snapshot = clock.Now();
 
     // NoStatus is an empty struct — verify it is accessible (compile + link check).

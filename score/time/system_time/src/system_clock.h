@@ -24,12 +24,12 @@ namespace score
 namespace time
 {
 
-class SystemClockIface;
+class SystemClockBackend;
 
 template <>
 struct ClockTraits<std::chrono::system_clock>
 {
-    using Backend        = SystemClockIface;
+    using Backend        = SystemClockBackend;
     using Duration       = std::chrono::system_clock::duration;
     using Timepoint      = std::chrono::system_clock::time_point;
     using Snapshot       = ClockSnapshot<Timepoint, NoStatus>;

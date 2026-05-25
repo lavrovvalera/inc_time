@@ -12,7 +12,7 @@
  ********************************************************************************/
 #include "examples/time/hpls_time/src/hpls_time_handler.h"
 
-#include "score/time/hpls_time/src/hpls_clock_mock.h"
+#include "score/time/hpls_time/src/hpls_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 #include "score/time/clock/src/clock_snapshot.h"
 #include "score/time/clock/src/no_status.h"
@@ -38,12 +38,12 @@ class HplsTimeHandlerTest : public ::testing::Test
 {
   protected:
     HplsTimeHandlerTest()
-        : mock_{std::make_shared<score::time::HplsClockMock>()}
+        : mock_{std::make_shared<score::time::HplsClockBackendMock>()}
         , guard_{mock_}
     {
     }
 
-    std::shared_ptr<score::time::HplsClockMock>          mock_;
+    std::shared_ptr<score::time::HplsClockBackendMock>          mock_;
     score::time::test_utils::ScopedClockOverride<score::time::HplsTime> guard_;
 };
 

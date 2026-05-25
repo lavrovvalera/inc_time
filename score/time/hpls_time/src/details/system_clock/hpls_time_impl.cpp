@@ -41,7 +41,7 @@ ClockSnapshot<HplsTime::Timepoint, NoStatus> HplsTimeImpl::Now() const noexcept
 }  // namespace hpls_time
 
 template <>
-std::shared_ptr<HplsClockIface> detail::CreateBackend<HplsTime>()
+std::shared_ptr<HplsClockBackend> detail::CreateBackend<HplsTime>()
 {
     return std::make_shared<hpls_time::sys_time::HplsTimeImpl>();
 }

@@ -10,10 +10,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_MOCK_H
-#define SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_MOCK_H
+#ifndef SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_MOCK_H
+#define SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_MOCK_H
 
-#include "score/time/system_time/src/system_clock_iface.h"
+#include "score/time/system_time/src/system_clock_backend.h"
 #include "score/time/system_time/src/system_clock.h"
 
 #include <gmock/gmock.h>
@@ -25,24 +25,24 @@ namespace time
 
 /// @brief GMock test double for the system-clock domain.
 ///
-/// Implements @c SystemClockIface so it can be injected via
+/// Implements @c SystemClockBackend so it can be injected via
 /// @c test_utils::ScopedClockOverride<std::chrono::system_clock> in unit tests.
 ///
 /// Usage:
 /// @code
-///   auto mock = std::make_shared<SystemClockMock>();
+///   auto mock = std::make_shared<SystemClockBackendMock>();
 ///   test_utils::ScopedClockOverride<std::chrono::system_clock> guard{mock};
 ///   EXPECT_CALL(*mock, Now()).WillOnce(Return(...));
 /// @endcode
-class SystemClockMock : public SystemClockIface
+class SystemClockBackendMock : public SystemClockBackend
 {
   public:
-    SystemClockMock()                                    = default;
-    ~SystemClockMock() noexcept override                 = default;
-    SystemClockMock(const SystemClockMock&)              = delete;
-    SystemClockMock& operator=(const SystemClockMock&)   = delete;
-    SystemClockMock(SystemClockMock&&)                   = delete;
-    SystemClockMock& operator=(SystemClockMock&&)        = delete;
+    SystemClockBackendMock()                                    = default;
+    ~SystemClockBackendMock() noexcept override                 = default;
+    SystemClockBackendMock(const SystemClockBackendMock&)              = delete;
+    SystemClockBackendMock& operator=(const SystemClockBackendMock&)   = delete;
+    SystemClockBackendMock(SystemClockBackendMock&&)                   = delete;
+    SystemClockBackendMock& operator=(SystemClockBackendMock&&)        = delete;
 
     MOCK_METHOD((ClockSnapshot<std::chrono::system_clock::time_point, NoStatus>),
                 Now,
@@ -53,4 +53,4 @@ class SystemClockMock : public SystemClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_MOCK_H
+#endif  // SCORE_TIME_SYSTEM_TIME_SRC_SYSTEM_CLOCK_BACKEND_MOCK_H

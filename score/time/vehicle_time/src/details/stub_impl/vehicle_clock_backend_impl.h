@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#ifndef SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_IMPL_H
-#define SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_IMPL_H
+#ifndef SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H
+#define SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H
 
-// Internal header — include ONLY from stub_impl/vehicle_clock_impl.cpp.
+// Internal header — include ONLY from stub_impl/vehicle_clock_backend_impl.cpp.
 
-#include "score/time/vehicle_time/src/vehicle_clock_iface.h"
+#include "score/time/vehicle_time/src/vehicle_clock_backend.h"
 
 #include <score/stop_token.hpp>
 
@@ -31,15 +31,15 @@ namespace detail
 /// @brief Stub backend for the vehicle time domain (host/test-only).
 ///
 /// Returns safe zero/false defaults for all methods.
-class VehicleClockImpl final : public VehicleClockIface
+class VehicleClockBackendImpl final : public VehicleClockBackend
 {
   public:
-    VehicleClockImpl() noexcept                            = default;
-    ~VehicleClockImpl() noexcept override                  = default;
-    VehicleClockImpl(const VehicleClockImpl&)              = delete;
-    VehicleClockImpl& operator=(const VehicleClockImpl&)   = delete;
-    VehicleClockImpl(VehicleClockImpl&&)                   = delete;
-    VehicleClockImpl& operator=(VehicleClockImpl&&)        = delete;
+    VehicleClockBackendImpl() noexcept                            = default;
+    ~VehicleClockBackendImpl() noexcept override                  = default;
+    VehicleClockBackendImpl(const VehicleClockBackendImpl&)              = delete;
+    VehicleClockBackendImpl& operator=(const VehicleClockBackendImpl&)   = delete;
+    VehicleClockBackendImpl(VehicleClockBackendImpl&&)                   = delete;
+    VehicleClockBackendImpl& operator=(VehicleClockBackendImpl&&)        = delete;
 
     ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> Now() const noexcept override
     {
@@ -76,4 +76,4 @@ class VehicleClockImpl final : public VehicleClockIface
 }  // namespace time
 }  // namespace score
 
-#endif  // SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_IMPL_H
+#endif  // SCORE_TIME_VEHICLE_TIME_SRC_DETAILS_STUB_IMPL_VEHICLE_CLOCK_BACKEND_IMPL_H

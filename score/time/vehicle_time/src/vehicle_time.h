@@ -34,7 +34,7 @@ namespace time
 /// \brief Tag struct for the PTP-synchronized vehicle time domain.
 ///
 /// Contains only domain types — no vtable, no factory, no virtual methods.
-/// The implementation is hidden behind VehicleClockIface (see VehicleTime/vehicle_clock_iface.h).
+/// The implementation is hidden behind VehicleClockBackend (see VehicleTime/vehicle_clock_backend.h).
 ///
 struct VehicleTime
 {

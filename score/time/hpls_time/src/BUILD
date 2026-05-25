@@ -16,9 +16,11 @@ load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER
 load("@score_baselibs//third_party/itf:py_unittest_qnx_test.bzl", "py_unittest_qnx_test")
 
 cc_library(
-    name = "hpls_clock_iface",
+    name = "hpls_clock",
+    srcs = ["hpls_clock.cpp"],
     hdrs = [
-        "hpls_clock_iface.h",
+        "hpls_clock.h",
+        "hpls_clock_backend.h",
         "hpls_time.h",
     ],
     features = COMPILER_WARNING_FEATURES,
@@ -31,27 +33,13 @@ cc_library(
 )
 
 cc_library(
-    name = "hpls_clock",
-    srcs = ["hpls_clock.cpp"],
-    hdrs = ["hpls_clock.h"],
-    features = COMPILER_WARNING_FEATURES,
-    tags = ["FFI"],
-    visibility = ["//score/time:__subpackages__"],
-    deps = [
-        ":hpls_clock_iface",
-        "//score/time/clock:clock_core",
-    ],
-)
-
-cc_library(
     name = "hpls_clock_mock",
     testonly = True,
-    hdrs = ["hpls_clock_mock.h"],
+    hdrs = ["hpls_clock_backend_mock.h"],
     features = COMPILER_WARNING_FEATURES,
     visibility = ["//visibility:public"],
     deps = [
         ":hpls_clock",
-        ":hpls_clock_iface",
         "//score/time/clock:clock_test_utils",
         "//score/time/hpls_time/src/details/stub_impl",
         "@googletest//:gtest",

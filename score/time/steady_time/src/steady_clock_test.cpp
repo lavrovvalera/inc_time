@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/steady_time/src/steady_clock_mock.h"
+#include "score/time/steady_time/src/steady_clock_backend_mock.h"
 #include "score/time/clock/src/scoped_clock_override.h"
 
 #include <gmock/gmock.h>
@@ -43,7 +43,7 @@ class SampleSteadyService
 
 TEST(SteadyClockTest, NowReturnsTimepointSuitableForDurationArithmetic)
 {
-    auto mock = std::make_shared<SteadyClockMock>();
+    auto mock = std::make_shared<SteadyClockBackendMock>();
     test_utils::ScopedClockOverride<std::chrono::steady_clock> guard{mock};
 
     const std::chrono::steady_clock::time_point tp{std::chrono::nanoseconds{1'000'000LL}};
@@ -59,7 +59,7 @@ TEST(SteadyClockTest, NowReturnsTimepointSuitableForDurationArithmetic)
 
 TEST(SteadyClockTest, NowReturnsExactTimepointFromMock)
 {
-    auto mock = std::make_shared<SteadyClockMock>();
+    auto mock = std::make_shared<SteadyClockBackendMock>();
     test_utils::ScopedClockOverride<std::chrono::steady_clock> guard{mock};
 
     const std::chrono::steady_clock::time_point tp{std::chrono::seconds{42}};
@@ -71,7 +71,7 @@ TEST(SteadyClockTest, NowReturnsExactTimepointFromMock)
 
 TEST(SteadyClockTest, NowSnapshotCarriesNoStatus)
 {
-    auto mock = std::make_shared<SteadyClockMock>();
+    auto mock = std::make_shared<SteadyClockBackendMock>();
     test_utils::ScopedClockOverride<std::chrono::steady_clock> guard{mock};
 
     EXPECT_CALL(*mock, Now()).WillOnce(Return(
@@ -86,7 +86,7 @@ TEST(SteadyClockTest, NowSnapshotCarriesNoStatus)
 
 TEST(SteadyClockTest, ScopedClockOverrideInjectsMockIntoSut)
 {
-    auto mock = std::make_shared<SteadyClockMock>();
+    auto mock = std::make_shared<SteadyClockBackendMock>();
     test_utils::ScopedClockOverride<std::chrono::steady_clock> guard{mock};
 
     const std::chrono::steady_clock::time_point expected{std::chrono::nanoseconds{999LL}};
@@ -99,7 +99,7 @@ TEST(SteadyClockTest, ScopedClockOverrideInjectsMockIntoSut)
 
 TEST(SteadyClockTest, ScopedClockOverrideRestoresBackendAfterScope)
 {
-    auto mock = std::make_shared<SteadyClockMock>();
+    auto mock = std::make_shared<SteadyClockBackendMock>();
     {
         test_utils::ScopedClockOverride<std::chrono::steady_clock> guard{mock};
         const std::chrono::steady_clock::time_point tp{std::chrono::seconds{1}};
@@ -108,7 +108,7 @@ TEST(SteadyClockTest, ScopedClockOverrideRestoresBackendAfterScope)
         EXPECT_EQ(SteadyClock::GetInstance().Now().TimePoint(), tp);
     }
     // After guard goes out of scope, a new guard must succeed without assertion.
-    auto mock2 = std::make_shared<SteadyClockMock>();
+    auto mock2 = std::make_shared<SteadyClockBackendMock>();
     test_utils::ScopedClockOverride<std::chrono::steady_clock> guard2{mock2};
     const std::chrono::steady_clock::time_point tp2{std::chrono::seconds{2}};
     EXPECT_CALL(*mock2, Now()).WillOnce(Return(

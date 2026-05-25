@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/vehicle_time/src/details/td_impl/vehicle_clock_impl.h"
+#include "score/time/vehicle_time/src/details/td_impl/vehicle_clock_backend_impl.h"
 #include "score/time/vehicle_time/src/details/logging_contexts.h"
 
 #include "score/TimeDaemon/code/ipc/svt/receiver/factory.h"
@@ -28,7 +28,7 @@ namespace time
 namespace detail
 {
 
-VehicleClockImpl::VehicleClockImpl(
+VehicleClockBackendImpl::VehicleClockBackendImpl(
     std::shared_ptr<score::td::SvtReceiver> receiver,
     HplsClock                               local_clock) noexcept
     : is_ready_{false}
@@ -38,7 +38,7 @@ VehicleClockImpl::VehicleClockImpl(
 }
 
 ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus>
-VehicleClockImpl::Now() const noexcept
+VehicleClockBackendImpl::Now() const noexcept
 {
     const ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> kUnknownSnapshot{
         VehicleTime::Timepoint{},
@@ -76,7 +76,7 @@ VehicleClockImpl::Now() const noexcept
     return ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus>{adjusted_tp, status};
 }
 
-bool VehicleClockImpl::IsAvailable() const noexcept
+bool VehicleClockBackendImpl::IsAvailable() const noexcept
 {
     if (!is_ready_)
     {
@@ -85,7 +85,7 @@ bool VehicleClockImpl::IsAvailable() const noexcept
     return is_ready_;
 }
 
-bool VehicleClockImpl::WaitUntilAvailable(
+bool VehicleClockBackendImpl::WaitUntilAvailable(
     const score::cpp::stop_token&          token,
     std::chrono::steady_clock::time_point  until) const noexcept
 {
@@ -105,30 +105,30 @@ bool VehicleClockImpl::WaitUntilAvailable(
     return false;
 }
 
-void VehicleClockImpl::SetTimeSlaveSyncDataReceivedCallback(
+void VehicleClockBackendImpl::SetTimeSlaveSyncDataReceivedCallback(
     VehicleTime::TimeSlaveSyncDataReceivedCallback&& /*callback*/) noexcept
 {
     // Not yet supported by the TimeDaemon IPC subscription layer.
 }
 
-void VehicleClockImpl::UnsetTimeSlaveSyncDataReceivedCallback() noexcept
+void VehicleClockBackendImpl::UnsetTimeSlaveSyncDataReceivedCallback() noexcept
 {
     // Not yet supported.
 }
 
-void VehicleClockImpl::SetPDelayMeasurementFinishedCallback(
+void VehicleClockBackendImpl::SetPDelayMeasurementFinishedCallback(
     VehicleTime::PDelayMeasurementFinishedCallback&& /*callback*/) noexcept
 {
     // Not yet supported.
 }
 
-void VehicleClockImpl::UnsetPDelayMeasurementFinishedCallback() noexcept
+void VehicleClockBackendImpl::UnsetPDelayMeasurementFinishedCallback() noexcept
 {
     // Not yet supported.
 }
 
 ClockStatus<VehicleTime::StatusFlag>
-VehicleClockImpl::ConvertPtpStatus(
+VehicleClockBackendImpl::ConvertPtpStatus(
     const score::td::svt::TimeBaseStatus& ptp_status) noexcept
 {
     using Flag = VehicleTime::StatusFlag;
@@ -159,9 +159,9 @@ VehicleClockImpl::ConvertPtpStatus(
 }  // namespace detail
 
 template <>
-std::shared_ptr<VehicleClockIface> detail::CreateBackend<VehicleTime>()
+std::shared_ptr<VehicleClockBackend> detail::CreateBackend<VehicleTime>()
 {
-    return std::make_shared<detail::VehicleClockImpl>(score::td::CreateSvtReceiver(),
+    return std::make_shared<detail::VehicleClockBackendImpl>(score::td::CreateSvtReceiver(),
                                                       HplsClock::GetInstance());
 }
 

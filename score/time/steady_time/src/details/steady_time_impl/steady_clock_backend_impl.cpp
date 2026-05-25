@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-#include "score/time/steady_time/src/details/stub_impl/steady_clock_impl.h"
+#include "score/time/steady_time/src/details/steady_time_impl/steady_clock_backend_impl.h"
 #include "score/time/steady_time/src/steady_clock.h"
 
 #include <memory>
@@ -21,9 +21,9 @@ namespace time
 {
 
 template <>
-std::shared_ptr<SteadyClockIface> detail::CreateBackend<std::chrono::steady_clock>()
+std::shared_ptr<SteadyClockBackend> detail::CreateBackend<std::chrono::steady_clock>()
 {
-    return std::make_shared<detail::SteadyClockImpl>();
+    return std::make_shared<detail::SteadyClockBackendImpl>();
 }
 
 }  // namespace time
