@@ -95,8 +95,6 @@ TEST(VehicleClockTest, NowIsSynchronizedReturnsFalseWhenTimeoutSet)
     EXPECT_FALSE(VehicleClock::GetInstance().Now().Status().IsSynchronized());
 }
 
-// ── UC2: IsAvailable / WaitUntilAvailable ─────────────────────────────────────
-
 TEST(VehicleClockTest, IsAvailableReturnsTrueWhenBackendReports)
 {
     auto mock = std::make_shared<VehicleClockMock>();
@@ -130,8 +128,6 @@ TEST(VehicleClockTest, WaitUntilAvailableForwardsTokenAndDeadlineToBackend)
     EXPECT_TRUE(VehicleClock::GetInstance().WaitUntilAvailable(source.get_token(), until));
 }
 
-// ── UC3: Subscribe / Unsubscribe — callback is captured and invocable ─────────
-
 TEST(VehicleClockTest, SubscribeTimeSlaveSyncDataCapturesAndInvokesCallback)
 {
     auto mock = std::make_shared<VehicleClockMock>();
@@ -163,7 +159,36 @@ TEST(VehicleClockTest, UnsubscribeTimeSlaveSyncDataForwardsToBackend)
     VehicleClock::GetInstance().Unsubscribe<TimeSlaveSyncData<VehicleTime>>();
 }
 
-// ── UC4: StatusFlag type alias is accessible via VehicleClock ─────────────────
+TEST(VehicleClockTest, SubscribePDelayMeasurementDataCapturesAndInvokesCallback)
+{
+    auto mock = std::make_shared<VehicleClockMock>();
+    test_utils::ScopedClockOverride<VehicleTime> guard{mock};
+
+    VehicleTime::PDelayMeasurementFinishedCallback captured_cb;
+    EXPECT_CALL(*mock, SetPDelayMeasurementFinishedCallback(_))
+        .WillOnce([&captured_cb](VehicleTime::PDelayMeasurementFinishedCallback&& cb) {
+            captured_cb = std::move(cb);
+        });
+
+    bool invoked{false};
+    VehicleClock::GetInstance().Subscribe<PDelayMeasurementData<VehicleTime>>(
+        [&invoked](const PDelayMeasurementData<VehicleTime>&) { invoked = true; });
+
+    PDelayMeasurementData<VehicleTime> data{};
+    captured_cb(data);
+
+    EXPECT_TRUE(invoked);
+}
+
+TEST(VehicleClockTest, UnsubscribePDelayMeasurementDataForwardsToBackend)
+{
+    auto mock = std::make_shared<VehicleClockMock>();
+    test_utils::ScopedClockOverride<VehicleTime> guard{mock};
+
+    EXPECT_CALL(*mock, UnsetPDelayMeasurementFinishedCallback()).Times(1);
+
+    VehicleClock::GetInstance().Unsubscribe<PDelayMeasurementData<VehicleTime>>();
+}
 
 TEST(VehicleClockTest, VehicleTimeStatusFlagValues)
 {
@@ -171,8 +196,6 @@ TEST(VehicleClockTest, VehicleTimeStatusFlagValues)
     EXPECT_EQ(static_cast<std::uint8_t>(VehicleTime::StatusFlag::kTimeOut), 0U);
     EXPECT_EQ(static_cast<std::uint8_t>(VehicleTime::StatusFlag::kTimeLeapFuture), 3U);
 }
-
-// ── UC6: ScopedClockOverride injects mock into a SUT that calls GetInstance() ──
 
 TEST(VehicleClockTest, ScopedClockOverrideInjectsMockIntoSut)
 {

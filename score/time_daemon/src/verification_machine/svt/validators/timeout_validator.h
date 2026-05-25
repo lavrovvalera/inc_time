@@ -25,7 +25,7 @@ namespace td
 
 /**
  * @brief Validation stage that checks if PTP frames are received, and raise TIMEOUT flag accordingly
- * @param debouncing_clock - reference clock object - used to calculate timeout
+ * @param timeout_clock - reference clock object - used to calculate timeout
  * @param reception_timeout - threshold in nanoseconds to define max timeout threshold
  */
 class TimeoutValidator : public VerificationStage<PtpTimeInfo>
