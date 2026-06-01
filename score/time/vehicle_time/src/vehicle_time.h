@@ -66,11 +66,11 @@ struct VehicleTime
 // Explicit specialisations for ClockStatus<VehicleTime::StatusFlag>.
 // Defined inline here so they are visible before VehicleTimeStatus uses them.
 
-/// \brief Returns true if vehicle time is synchronized.
+/// \brief Returns true if the vehicle time data is reliable for use right now.
 ///
-/// Synchronized := kSynchronized is set AND none of {kTimeOut, kTimeLeapFuture, kTimeLeapPast} is set.
+/// Reliable := kSynchronized is set AND none of {kTimeOut, kTimeLeapFuture, kTimeLeapPast} is set.
 template <>
-inline bool ClockStatus<VehicleTime::StatusFlag>::IsSynchronized() const noexcept
+inline bool ClockStatus<VehicleTime::StatusFlag>::IsReliable() const noexcept
 {
     return (IsFlagActive(VehicleTime::StatusFlag::kSynchronized) &&
             (!IsAnyOfFlagsActive({VehicleTime::StatusFlag::kTimeOut,
@@ -78,12 +78,21 @@ inline bool ClockStatus<VehicleTime::StatusFlag>::IsSynchronized() const noexcep
                                   VehicleTime::StatusFlag::kTimeLeapPast})));
 }
 
-/// \brief Returns true if the vehicle time status is in a valid (non-error) state.
+/// \brief Returns true if the vehicle time has been synchronized at least once during this lifecycle.
 ///
-/// Valid := kUnknown is NOT set, at least one non-kUnknown flag is set,
-///          and kTimeLeapFuture and kTimeLeapPast are not both set simultaneously.
+/// HasBeenSynchronized := kSynchronized flag is set, regardless of any active fault flags.
 template <>
-inline bool ClockStatus<VehicleTime::StatusFlag>::IsValid() const noexcept
+inline bool ClockStatus<VehicleTime::StatusFlag>::HasBeenSynchronized() const noexcept
+{
+    return IsFlagActive(VehicleTime::StatusFlag::kSynchronized);
+}
+
+/// \brief Returns true if the vehicle time status flags are internally consistent (no contradictory combination).
+///
+/// Consistent := kUnknown is NOT set, at least one non-kUnknown flag is set,
+///               and kTimeLeapFuture and kTimeLeapPast are not both set simultaneously.
+template <>
+inline bool ClockStatus<VehicleTime::StatusFlag>::IsConsistent() const noexcept
 {
     if (IsFlagActive(VehicleTime::StatusFlag::kUnknown))
     {
@@ -138,21 +147,34 @@ struct VehicleTimeStatus
     ClockStatus<VehicleTime::StatusFlag> flags{};
 
     /// \brief Fractional rate deviation of the local clock relative to the Grand Master.
-    ///        Unit: dimensionless (e.g. 1.0e-9 == 1 ppb). Zero when kTimeOut is set.
+    ///        Unit: dimensionless (e.g. 1.0e-9 == 1 ppb).
     double rate_deviation{0.0};
 
     // Convenience delegates — avoid .flags. indirection at call sites.
 
-    /// \brief Returns true if the vehicle time is currently synchronized.
-    bool IsSynchronized() const noexcept
+    /// \brief Returns true if the vehicle time data is reliable for use right now.
+    bool IsReliable() const noexcept
     {
-        return flags.IsSynchronized();
+        return flags.IsReliable();
     }
 
-    /// \brief Returns true if the vehicle time is in a valid (non-error) state.
-    bool IsValid() const noexcept
+    /// \brief Returns true if the vehicle time has been synchronized at least once during this lifecycle.
+    bool HasBeenSynchronized() const noexcept
     {
-        return flags.IsValid();
+        return flags.HasBeenSynchronized();
+    }
+
+    /// \brief Returns true if the vehicle time status flags are internally consistent.
+    bool IsConsistent() const noexcept
+    {
+        return flags.IsConsistent();
+    }
+
+    /// \brief Returns the fractional rate deviation of the local clock relative to the Grand Master.
+    ///        Unit: dimensionless (e.g. 1.0e-9 == 1 ppb).
+    double RateDeviation() const noexcept
+    {
+        return rate_deviation;
     }
 
     /// \brief Returns true if the given StatusFlag bit-position is active.

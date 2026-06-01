@@ -35,14 +35,14 @@ struct TimeReport
     ///        Provided as a local-time reference alongside the network-synchronized vehicle time.
     std::int64_t hirs_time_ns{0};
 
-    /// @brief True if the vehicle time is currently synchronized to the PTP grand master.
-    bool synchronized{false};
+    /// @brief True if the vehicle time data is currently reliable (synchronized + no faults active).
+    bool is_reliable{false};
 
-    /// @brief True if the vehicle time is in a valid (non-error) state.
-    bool valid{false};
+    /// @brief True if the vehicle time status flags are internally consistent (no contradictory combination).
+    bool is_consistent{false};
 
-    /// @brief Fractional rate deviation of the local clock relative to the grand master.
-    ///        Unit: dimensionless (e.g. 1.0e-9 == 1 ppb).  Zero when not synchronized.
+    /// @brief Fractional rate deviation of the local clock relative to the PTP Grand Master.
+    ///        Unit: dimensionless (e.g. 1.0e-9 == 1 ppb).
     double rate_deviation{0.0};
 };
 
@@ -83,9 +83,9 @@ class VehicleTimeHandler
         return TimeReport{
             vehicle_snapshot.TimePointNs().count(),
             hirs_snapshot.TimePointNs().count(),
-            vehicle_snapshot.Status().IsSynchronized(),
-            vehicle_snapshot.Status().IsValid(),
-            vehicle_snapshot.Status().rate_deviation,
+            vehicle_snapshot.Status().IsReliable(),
+            vehicle_snapshot.Status().IsConsistent(),
+            vehicle_snapshot.Status().RateDeviation(),
         };
     }
 };

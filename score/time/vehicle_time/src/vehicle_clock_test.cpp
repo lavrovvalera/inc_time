@@ -68,7 +68,7 @@ TEST(VehicleClockTest, NowReturnsSynchronizedStatusAndTimepoint)
     EXPECT_EQ(result.TimePoint().time_since_epoch(), std::chrono::nanoseconds{42LL});
 }
 
-TEST(VehicleClockTest, NowIsSynchronizedReturnsTrueWhenFlagSet)
+TEST(VehicleClockTest, NowIsReliableReturnsTrueWhenFlagSet)
 {
     auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
@@ -78,10 +78,10 @@ TEST(VehicleClockTest, NowIsSynchronizedReturnsTrueWhenFlagSet)
     EXPECT_CALL(*mock, Now()).WillOnce(Return(
         ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus>{VehicleTime::Timepoint{}, status}));
 
-    EXPECT_TRUE(VehicleClock::GetInstance().Now().Status().IsSynchronized());
+    EXPECT_TRUE(VehicleClock::GetInstance().Now().Status().IsReliable());
 }
 
-TEST(VehicleClockTest, NowIsSynchronizedReturnsFalseWhenTimeoutSet)
+TEST(VehicleClockTest, NowIsReliableReturnsFalseWhenTimeoutSet)
 {
     auto mock = std::make_shared<VehicleClockBackendMock>();
     test_utils::ScopedClockOverride<VehicleTime> guard{mock};
@@ -92,7 +92,7 @@ TEST(VehicleClockTest, NowIsSynchronizedReturnsFalseWhenTimeoutSet)
     EXPECT_CALL(*mock, Now()).WillOnce(Return(
         ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus>{VehicleTime::Timepoint{}, status}));
 
-    EXPECT_FALSE(VehicleClock::GetInstance().Now().Status().IsSynchronized());
+    EXPECT_FALSE(VehicleClock::GetInstance().Now().Status().IsReliable());
 }
 
 TEST(VehicleClockTest, IsAvailableReturnsTrueWhenBackendReports)

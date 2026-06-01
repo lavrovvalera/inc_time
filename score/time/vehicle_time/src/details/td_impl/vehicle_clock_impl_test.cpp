@@ -222,7 +222,7 @@ TEST_F(VehicleTimeImplTest, NowForwardsRateDeviation)
         .WillOnce(Return(ClockSnapshot<HirsTime::Timepoint, NoStatus>{HirsTime::Timepoint{0ns}, NoStatus{}}));
 
     const auto snapshot = impl_->Now();
-    EXPECT_DOUBLE_EQ(snapshot.Status().rate_deviation, 2.5);
+    EXPECT_DOUBLE_EQ(snapshot.Status().RateDeviation(), 2.5);
 }
 
 // ── WaitUntilAvailable ───────────────────────────────────────────────────────

@@ -59,8 +59,8 @@ void PrintReport(const examples::time::vehicle_time::TimeReport& report, std::ui
     std::cout << "[" << seq << "]"
               << "  vehicle=" << v_sec << "." << v_ns << " s"
               << "  hirs="    << h_sec << "." << h_ns << " s"
-              << "  synchronized=" << (report.synchronized ? "yes" : "no")
-              << "  valid="        << (report.valid         ? "yes" : "no")
+              << "  is_reliable="   << (report.is_reliable   ? "yes" : "no")
+              << "  is_consistent=" << (report.is_consistent ? "yes" : "no")
               << "  rate_deviation=" << report.rate_deviation
               << "\n";
 }

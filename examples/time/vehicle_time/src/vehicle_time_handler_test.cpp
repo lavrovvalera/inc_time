@@ -80,8 +80,8 @@ TEST_F(VehicleTimeHandlerTest, ReportContainsSynchronizedVehicleTimeAndHirsTime)
 
     EXPECT_EQ(report.vehicle_time_ns, 5'000'000'000LL);
     EXPECT_EQ(report.hirs_time_ns,    1'234'567'890LL);
-    EXPECT_TRUE(report.synchronized);
-    EXPECT_TRUE(report.valid);
+    EXPECT_TRUE(report.is_reliable);
+    EXPECT_TRUE(report.is_consistent);
     EXPECT_DOUBLE_EQ(report.rate_deviation, 1.5e-9);
 }
 
@@ -101,7 +101,7 @@ TEST_F(VehicleTimeHandlerTest, ReportShowsNotSynchronizedWhenTimeOutFlagIsSet)
     VehicleTimeHandler handler;
     const TimeReport report = handler.GetCurrentTime();
 
-    EXPECT_FALSE(report.synchronized);
+    EXPECT_FALSE(report.is_reliable);
     EXPECT_EQ(report.vehicle_time_ns, 0LL);
 }
 
@@ -124,7 +124,7 @@ TEST_F(VehicleTimeHandlerTest, HirsTimeIsIndependentFromVehicleTimeSynchronizati
     const TimeReport report = handler.GetCurrentTime();
 
     EXPECT_EQ(report.hirs_time_ns, 99'000'000LL);
-    EXPECT_FALSE(report.synchronized);
+    EXPECT_FALSE(report.is_reliable);
 }
 
 }  // namespace test
