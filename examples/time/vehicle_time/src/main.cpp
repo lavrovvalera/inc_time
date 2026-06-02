@@ -13,7 +13,7 @@
 
 /**
  * @file
- * @brief Example: periodic VehicleTime + HirsTime report printer.
+ * @brief Example: periodic VehicleTime + HighResSteadyTime report printer.
  *
  * Uses VehicleTimeHandler to obtain a combined snapshot of the PTP-synchronized
  * vehicle time and the local monotonic HIRS time, then prints both to stdout
@@ -53,8 +53,8 @@ void PrintReport(const examples::time::vehicle_time::TimeReport& report, std::ui
 {
     const auto v_sec  = report.vehicle_time_ns / 1'000'000'000LL;
     const auto v_ns   = report.vehicle_time_ns % 1'000'000'000LL;
-    const auto h_sec  = report.hirs_time_ns    / 1'000'000'000LL;
-    const auto h_ns   = report.hirs_time_ns    % 1'000'000'000LL;
+    const auto h_sec  = report.high_res_steady_time_ns    / 1'000'000'000LL;
+    const auto h_ns   = report.high_res_steady_time_ns    % 1'000'000'000LL;
 
     std::cout << "[" << seq << "]"
               << "  vehicle=" << v_sec << "." << v_ns << " s"
@@ -80,7 +80,7 @@ int main()
         return 1;
     }
 
-    std::cout << "VehicleTime + HirsTime printer started. Press Ctrl+C to stop.\n";
+    std::cout << "VehicleTime + HighResSteadyTime printer started. Press Ctrl+C to stop.\n";
 
     std::uint64_t seq{0U};
 

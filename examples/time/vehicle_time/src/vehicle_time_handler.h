@@ -14,7 +14,7 @@
 #define EXAMPLES_TIME_VEHICLE_TIME_VEHICLE_TIME_HANDLER_H
 
 #include "score/time/vehicle_time/src/vehicle_clock.h"
-#include "score/time/hirs_time/src/hirs_clock.h"
+#include "score/time/high_res_steady_time/src/high_res_steady_clock.h"
 
 #include <cstdint>
 
@@ -31,9 +31,9 @@ struct TimeReport
     /// @brief Current vehicle (PTP-synchronized) time, nanoseconds since VehicleTime epoch.
     std::int64_t vehicle_time_ns{0};
 
-    /// @brief Current local monotonic time from HirsClock, nanoseconds since process boot.
+    /// @brief Current local monotonic time from HighResSteadyClock, nanoseconds since process boot.
     ///        Provided as a local-time reference alongside the network-synchronized vehicle time.
-    std::int64_t hirs_time_ns{0};
+    std::int64_t high_res_steady_time_ns{0};
 
     /// @brief True if the vehicle time data is currently reliable (synchronized + no faults active).
     bool is_reliable{false};
@@ -46,7 +46,7 @@ struct TimeReport
     double rate_deviation{0.0};
 };
 
-/// @brief Convenience wrapper that reads VehicleClock and HirsClock in one call.
+/// @brief Convenience wrapper that reads VehicleClock and HighResSteadyClock in one call.
 ///
 /// This class demonstrates how to write a component that depends on two different
 /// time bases.  In unit tests, both clocks can be replaced independently via
@@ -55,9 +55,9 @@ struct TimeReport
 /// @par Testing pattern
 /// @code
 ///   auto vehicle_mock = std::make_shared<score::time::VehicleClockBackendMock>();
-///   auto hirs_mock    = std::make_shared<score::time::HirsClockBackendMock>();
+///   auto hirs_mock    = std::make_shared<score::time::HighResSteadyClockBackendMock>();
 ///   score::time::test_utils::ScopedClockOverride<score::time::VehicleTime> vg{vehicle_mock};
-///   score::time::test_utils::ScopedClockOverride<score::time::HirsTime>    hg{hirs_mock};
+///   score::time::test_utils::ScopedClockOverride<score::time::HighResSteadyTime>    hg{hirs_mock};
 ///   EXPECT_CALL(*vehicle_mock, Init()).WillOnce(Return(true));
 ///   EXPECT_CALL(*vehicle_mock, Now()).WillOnce(Return(...));
 ///   EXPECT_CALL(*hirs_mock,    Now()).WillOnce(Return(...));
@@ -92,7 +92,7 @@ class VehicleTimeHandler
     [[nodiscard]] TimeReport GetCurrentTime() const noexcept
     {
         const auto vehicle_snapshot = score::time::VehicleClock::GetInstance().Now();
-        const auto hirs_snapshot    = score::time::HirsClock::GetInstance().Now();
+        const auto hirs_snapshot    = score::time::HighResSteadyClock::GetInstance().Now();
 
         return TimeReport{
             vehicle_snapshot.TimePointNs().count(),

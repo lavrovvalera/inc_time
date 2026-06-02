@@ -17,7 +17,7 @@
 #include <ostream>
 #include <type_traits>
 
-#include "score/time/hirs_time/src/hirs_clock.h"
+#include "score/time/high_res_steady_time/src/high_res_steady_clock.h"
 
 namespace score
 {
@@ -79,7 +79,7 @@ struct PtpTimeInfo
     /**
      * The local time base, used in the ptp evaluations
      */
-    using ReferenceClock = score::time::HirsClock;
+    using ReferenceClock = score::time::HighResSteadyClock;
 
     std::chrono::nanoseconds ptp_assumed_time;
     ReferenceClock::time_point local_time;

@@ -12,7 +12,7 @@
  ********************************************************************************/
 #include "score/time_daemon/src/ptp_machine/stub/factory.h"
 #include "score/time_daemon/src/ptp_machine/stub/details/stub_ptp_engine.h"
-#include "score/time/hirs_time/src/hirs_clock.h"
+#include "score/time/high_res_steady_time/src/high_res_steady_clock.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -68,7 +68,7 @@ TEST_F(GPTPStubMachineIntegrationTest, GetSynchronizedDataTest)
 {
     EXPECT_TRUE(machine_->Init());
 
-    auto clock = score::time::HirsClock::GetInstance();
+    auto clock = score::time::HighResSteadyClock::GetInstance();
     const auto time_before_start = clock.Now().TimeSinceEpoch();
 
     machine_->Start();

@@ -23,7 +23,7 @@ namespace time
 /// @brief SFINAE gate for @c Clock<Tag>::Init().
 ///
 /// The primary template is intentionally undefined. Clock domains whose backends
-/// are always ready (e.g. @c HirsTime, @c std::chrono::steady_clock) must NOT
+/// are always ready (e.g. @c HighResSteadyTime, @c std::chrono::steady_clock) must NOT
 /// provide a specialization — calling @c Init() on such clocks is a compile error
 /// (use of incomplete type).
 ///
@@ -41,7 +41,7 @@ struct InitializationHook;
 /// @brief Detects whether @c InitializationHook<Tag> has been specialised.
 ///
 /// @c HasInitialization<Tag>::value is @c true only for clock domains that require
-/// explicit initialization (e.g. VehicleTime). For always-ready clocks (HirsTime,
+/// explicit initialization (e.g. VehicleTime). For always-ready clocks (HighResSteadyTime,
 /// std::chrono::steady_clock, std::chrono::system_clock) the hook is undefined and
 /// this trait is @c false.
 template <typename Tag, typename = void>

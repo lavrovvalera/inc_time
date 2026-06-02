@@ -32,8 +32,8 @@ namespace test_utils
 /// override active after the call returns.
 ///
 /// @code
-///   auto mock  = std::make_shared<HirsClockBackendMock>();
-///   auto clock = ClockTestFactory<HirsTime>::Make(mock);
+///   auto mock  = std::make_shared<HighResSteadyClockBackendMock>();
+///   auto clock = ClockTestFactory<HighResSteadyTime>::Make(mock);
 ///   TimeoutValidator v{clock, threshold};
 ///   EXPECT_CALL(*mock, Now())...;
 /// @endcode

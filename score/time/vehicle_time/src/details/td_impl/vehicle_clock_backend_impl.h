@@ -18,7 +18,7 @@
 
 #include "score/time/vehicle_time/src/vehicle_clock_backend.h"
 #include "score/time/vehicle_time/src/vehicle_clock.h"
-#include "score/time/hirs_time/src/hirs_clock.h"
+#include "score/time/high_res_steady_time/src/high_res_steady_clock.h"
 #include "score/time_daemon/src/ipc/svt/receiver/svt_receiver.h"
 
 #include <score/stop_token.hpp>
@@ -42,7 +42,7 @@ namespace detail
 ///
 ///   adjusted_ptp = ptp_stamp_at_capture + (local_now - local_at_capture)
 ///
-/// where the local reference clock is supplied via @c HirsClock::GetInstance()
+/// where the local reference clock is supplied via @c HighResSteadyClock::GetInstance()
 /// (captured once at construction to avoid per-call mutex overhead).
 ///
 /// Callback registration is not yet supported; all Set/Unset methods are no-ops
@@ -55,7 +55,7 @@ class VehicleClockBackendImpl final : public VehicleClockBackend
 {
   public:
     VehicleClockBackendImpl(std::shared_ptr<score::td::SvtReceiver> receiver,
-                            HirsClock local_clock) noexcept;
+                            HighResSteadyClock local_clock) noexcept;
 
     ~VehicleClockBackendImpl() noexcept override = default;
     VehicleClockBackendImpl(const VehicleClockBackendImpl&) = delete;
@@ -91,7 +91,7 @@ class VehicleClockBackendImpl final : public VehicleClockBackend
     std::atomic_bool is_ready_;
     std::mutex init_mutex_;
     std::shared_ptr<score::td::SvtReceiver> svt_receiver_;
-    HirsClock local_clock_;
+    HighResSteadyClock local_clock_;
 };
 
 }  // namespace detail
