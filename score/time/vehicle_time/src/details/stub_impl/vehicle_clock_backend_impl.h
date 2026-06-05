@@ -75,6 +75,13 @@ class VehicleClockBackendImpl final : public VehicleClockBackend
     }
 
     void UnsetPDelayMeasurementFinishedCallback() noexcept override {}
+
+    void SetStatusChangedCallback(
+        VehicleTime::StatusChangedCallback&& /*callback*/) noexcept override
+    {
+    }
+
+    void UnsetStatusChangedCallback() noexcept override {}
 };
 
 }  // namespace detail

@@ -68,7 +68,11 @@ struct TimeReport
 class VehicleTimeHandler
 {
   public:
-    VehicleTimeHandler()  = default;
+    VehicleTimeHandler()
+        : clock_{score::time::VehicleClock::GetInstance()}
+        , high_res_steady_clock_{score::time::HighResSteadyClock::GetInstance()}
+    {
+    }
     ~VehicleTimeHandler() = default;
 
     VehicleTimeHandler(const VehicleTimeHandler&)             = delete;
@@ -85,14 +89,14 @@ class VehicleTimeHandler
     /// @return @c true if the backend is ready.
     [[nodiscard]] bool Init() noexcept
     {
-        return score::time::VehicleClock::GetInstance().Init();
+        return clock_.Init();
     }
 
     /// @brief Reads the current vehicle time and local HIRS time and returns a combined report.
     [[nodiscard]] TimeReport GetCurrentTime() const noexcept
     {
-        const auto vehicle_snapshot = score::time::VehicleClock::GetInstance().Now();
-        const auto hirs_snapshot    = score::time::HighResSteadyClock::GetInstance().Now();
+        const auto vehicle_snapshot = clock_.Now();
+        const auto hirs_snapshot    = high_res_steady_clock_.Now();
 
         return TimeReport{
             vehicle_snapshot.TimePointNs().count(),
@@ -102,6 +106,27 @@ class VehicleTimeHandler
             vehicle_snapshot.Status().RateDeviation(),
         };
     }
+
+    /// @brief Registers a callback that is invoked when VehicleTimeStatus flags change.
+    ///
+    /// @note Delivery is not yet implemented in the backend.  The callback can
+    ///       be registered now; it will be invoked once background-thread
+    ///       delivery is wired up in a future change.
+    void RegisterStatusCallback(
+        score::time::VehicleTime::StatusChangedCallback callback) noexcept
+    {
+        clock_.Subscribe<score::time::VehicleTimeStatus>(std::move(callback));
+    }
+
+    /// @brief Removes the status-change callback.
+    void UnregisterStatusCallback() noexcept
+    {
+        clock_.Unsubscribe<score::time::VehicleTimeStatus>();
+    }
+
+  private:
+    score::time::VehicleClock        clock_;
+    score::time::HighResSteadyClock  high_res_steady_clock_;
 };
 
 }  // namespace vehicle_time

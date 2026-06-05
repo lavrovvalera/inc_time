@@ -28,6 +28,9 @@ namespace score
 namespace time
 {
 
+// Forward declaration — VehicleTimeStatus is defined after VehicleTime below.
+struct VehicleTimeStatus;
+
 ///
 /// \brief Tag struct for the PTP-synchronized vehicle time domain.
 ///
@@ -59,6 +62,8 @@ struct VehicleTime
         score::cpp::callback<void(const TimeSlaveSyncData<VehicleTime>&), kCallbackCapacity>;
     using PDelayMeasurementFinishedCallback =
         score::cpp::callback<void(const PDelayMeasurementData<VehicleTime>&), kCallbackCapacity>;
+    using StatusChangedCallback =
+        score::cpp::callback<void(const VehicleTimeStatus&), kCallbackCapacity>;
 };
 
 /// \brief Formats all active VehicleTime status flags into an ostringstream for diagnostics.

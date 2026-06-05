@@ -140,6 +140,24 @@ TEST_F(VehicleTimeHandlerTest, HighResSteadyTimeIsIndependentFromVehicleTimeSync
     EXPECT_FALSE(report.is_reliable);
 }
 
+TEST_F(VehicleTimeHandlerTest, RegisterStatusCallbackForwardsToBackend)
+{
+    EXPECT_CALL(*vehicle_mock_,
+                SetStatusChangedCallback(::testing::_))
+        .Times(1);
+
+    VehicleTimeHandler handler;
+    handler.RegisterStatusCallback([](const score::time::VehicleTimeStatus&) {});
+}
+
+TEST_F(VehicleTimeHandlerTest, UnregisterStatusCallbackForwardsToBackend)
+{
+    EXPECT_CALL(*vehicle_mock_, UnsetStatusChangedCallback()).Times(1);
+
+    VehicleTimeHandler handler;
+    handler.UnregisterStatusCallback();
+}
+
 }  // namespace test
 }  // namespace vehicle_time
 }  // namespace time

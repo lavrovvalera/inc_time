@@ -82,6 +82,11 @@ class VehicleClockBackendImpl final : public VehicleClockBackend
 
     void UnsetPDelayMeasurementFinishedCallback() noexcept override;
 
+    void SetStatusChangedCallback(
+        VehicleTime::StatusChangedCallback&& callback) noexcept override;
+
+    void UnsetStatusChangedCallback() noexcept override;
+
   private:
     /// @brief Converts PTP status flags from the TimeDaemon IPC representation to
     ///        the @c ClockStatus<VehicleTime::StatusFlag> representation.

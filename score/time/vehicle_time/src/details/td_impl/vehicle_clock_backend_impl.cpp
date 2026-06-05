@@ -149,6 +149,17 @@ void VehicleClockBackendImpl::UnsetPDelayMeasurementFinishedCallback() noexcept
     // Not yet supported.
 }
 
+void VehicleClockBackendImpl::SetStatusChangedCallback(
+    VehicleTime::StatusChangedCallback&& /*callback*/) noexcept
+{
+    // Not yet supported — will be invoked from a dedicated background thread in a future change.
+}
+
+void VehicleClockBackendImpl::UnsetStatusChangedCallback() noexcept
+{
+    // Not yet supported.
+}
+
 ClockStatus<VehicleTime::StatusFlag> VehicleClockBackendImpl::ConvertPtpStatus(
     const score::td::svt::TimeBaseStatus& ptp_status) noexcept
 {

@@ -261,6 +261,8 @@ TEST_F(VehicleClockBackendImplTest, CallbackMethodsAreNoOps)
     impl_->SetPDelayMeasurementFinishedCallback(
         [](const PDelayMeasurementData<VehicleTime>&) {});
     impl_->UnsetPDelayMeasurementFinishedCallback();
+    impl_->SetStatusChangedCallback([](const VehicleTimeStatus&) {});
+    impl_->UnsetStatusChangedCallback();
 }
 
 }  // namespace

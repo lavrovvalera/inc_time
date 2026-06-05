@@ -88,6 +88,16 @@ struct SubscriptionHook<VehicleTime, PDelayMeasurementData<VehicleTime>>
     static void Unsubscribe(Backend& impl) noexcept;
 };
 
+template <>
+struct SubscriptionHook<VehicleTime, VehicleTimeStatus>
+{
+    using Backend  = ClockTraits<VehicleTime>::Backend;
+    using Callback = VehicleTime::StatusChangedCallback;
+
+    static void Subscribe(Backend& impl, Callback cb) noexcept;
+    static void Unsubscribe(Backend& impl) noexcept;
+};
+
 using VehicleClock     = Clock<VehicleTime>;
 using VehicleTimePoint = ClockTraits<VehicleTime>::Timepoint;
 using VehicleSnapshot  = ClockTraits<VehicleTime>::Snapshot;

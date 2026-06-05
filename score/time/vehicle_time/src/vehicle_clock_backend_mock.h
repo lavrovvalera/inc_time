@@ -72,6 +72,13 @@ class VehicleClockBackendMock : public VehicleClockBackend
                 (noexcept, override));
 
     MOCK_METHOD(void, UnsetPDelayMeasurementFinishedCallback, (), (noexcept, override));
+
+    MOCK_METHOD(void,
+                SetStatusChangedCallback,
+                (VehicleTime::StatusChangedCallback && callback),
+                (noexcept, override));
+
+    MOCK_METHOD(void, UnsetStatusChangedCallback, (), (noexcept, override));
 };
 
 }  // namespace time

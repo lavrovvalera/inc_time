@@ -92,5 +92,18 @@ void SubscriptionHook<VehicleTime, PDelayMeasurementData<VehicleTime>>::Unsubscr
     impl.UnsetPDelayMeasurementFinishedCallback();
 }
 
+void SubscriptionHook<VehicleTime, VehicleTimeStatus>::Subscribe(
+    Backend& impl,
+    VehicleTime::StatusChangedCallback cb) noexcept
+{
+    impl.SetStatusChangedCallback(std::move(cb));
+}
+
+void SubscriptionHook<VehicleTime, VehicleTimeStatus>::Unsubscribe(
+    Backend& impl) noexcept
+{
+    impl.UnsetStatusChangedCallback();
+}
+
 }  // namespace time
 }  // namespace score

@@ -65,12 +65,27 @@ class VehicleClockBackend
     /// \brief Removes the time-sync data callback.
     virtual void UnsetTimeSlaveSyncDataReceivedCallback() noexcept = 0;
 
-    /// \brief Installs the callback invoked after a finished pDelay measurement.
+    /// rief Installs the callback invoked after a finished pDelay measurement.
     virtual void SetPDelayMeasurementFinishedCallback(
         VehicleTime::PDelayMeasurementFinishedCallback&& callback) noexcept = 0;
 
-    /// \brief Removes the pDelay measurement callback.
+    /// rief Removes the pDelay measurement callback.
     virtual void UnsetPDelayMeasurementFinishedCallback() noexcept = 0;
+
+    /// rief Installs the callback invoked when VehicleTimeStatus flags change.
+    ///
+    /// The callback fires:
+    ///  - unconditionally on the first \c Now() call after registration; and
+    ///  - on every subsequent \c Now() call where the status flags differ from
+    ///    the last fired value (rate deviation is ignored for comparison).
+    ///
+    /// The callback is invoked on the thread that calls \c Now() — typically
+    /// a background polling thread.  The implementation must be thread-safe.
+    virtual void SetStatusChangedCallback(
+        VehicleTime::StatusChangedCallback&& callback) noexcept = 0;
+
+    /// \brief Removes the status-changed callback.
+    virtual void UnsetStatusChangedCallback() noexcept = 0;
 };
 
 }  // namespace time
