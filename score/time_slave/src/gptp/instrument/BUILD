@@ -15,31 +15,25 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
-    name = "gptp_shm_machine",
-    srcs = [
-        "factory.cpp",
-    ],
-    hdrs = [
-        "factory.h",
-        "gptp_shm_machine.h",
-    ],
+    name = "probe",
+    srcs = ["probe.cpp"],
+    hdrs = ["probe.h"],
     features = COMPILER_WARNING_FEATURES,
     tags = ["QM"],
-    visibility = ["//score/time_daemon:__subpackages__"],
+    visibility = ["//score:__subpackages__"],
     deps = [
-        "//score/time_daemon/src/ptp_machine/core:ptp_machine",
-        "//score/time_daemon/src/ptp_machine/shm/details:shm_ptp_engine",
-        "//score/ts_client/src:gptp_ipc",
+        "//score/time_slave/src/common:logging_contexts",
+        "//score/time_slave/src/gptp/record:recorder",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
 cc_test(
-    name = "gptp_shm_machine_test",
-    srcs = ["gptp_shm_machine_test.cpp"],
+    name = "probe_test",
+    srcs = ["probe_test.cpp"],
     tags = ["unit"],
     deps = [
-        ":gptp_shm_machine",
-        "//score/ts_client/src:gptp_ipc",
+        ":probe",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/mw/log:console_only_backend",
@@ -48,9 +42,7 @@ cc_test(
 
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
-    cc_unit_tests = [":gptp_shm_machine_test"],
-    test_suites_from_sub_packages = [
-        "//score/time_daemon/src/ptp_machine/shm/details:unit_test_suite",
-    ],
-    visibility = ["//score/time_daemon:__subpackages__"],
+    cc_unit_tests = [":probe_test"],
+    test_suites_from_sub_packages = [],
+    visibility = ["//score:__subpackages__"],
 )

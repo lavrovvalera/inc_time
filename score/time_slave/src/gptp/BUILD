@@ -15,31 +15,36 @@ load("@score_baselibs//:bazel/unit_tests.bzl", "cc_unit_test_suites_for_host_and
 load("@score_baselibs//score/language/safecpp:toolchain_features.bzl", "COMPILER_WARNING_FEATURES")
 
 cc_library(
-    name = "gptp_shm_machine",
-    srcs = [
-        "factory.cpp",
-    ],
-    hdrs = [
-        "factory.h",
-        "gptp_shm_machine.h",
-    ],
+    name = "gptp_engine",
+    srcs = ["gptp_engine.cpp"],
+    hdrs = ["gptp_engine.h"],
     features = COMPILER_WARNING_FEATURES,
+    linkopts = select({
+        "@platforms//os:qnx": [
+            "-lsocket",
+            "-lc",
+        ],
+        "//conditions:default": ["-lpthread"],
+    }),
     tags = ["QM"],
-    visibility = ["//score/time_daemon:__subpackages__"],
+    visibility = ["//score:__subpackages__"],
     deps = [
-        "//score/time_daemon/src/ptp_machine/core:ptp_machine",
-        "//score/time_daemon/src/ptp_machine/shm/details:shm_ptp_engine",
+        "//score/time_slave/src/common:logging_contexts",
+        "//score/time_slave/src/gptp/details:gptp_details",
+        "//score/time_slave/src/gptp/phc:phc_adjuster",
         "//score/ts_client/src:gptp_ipc",
+        "@score_baselibs//score/mw/log:frontend",
     ],
 )
 
 cc_test(
-    name = "gptp_shm_machine_test",
-    srcs = ["gptp_shm_machine_test.cpp"],
+    name = "gptp_engine_test",
+    srcs = ["gptp_engine_test.cpp"],
     tags = ["unit"],
     deps = [
-        ":gptp_shm_machine",
-        "//score/ts_client/src:gptp_ipc",
+        ":gptp_engine",
+        "//score/time_slave/src/gptp/details:network_identity",
+        "//score/time_slave/src/gptp/details:raw_socket",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "@score_baselibs//score/mw/log:console_only_backend",
@@ -48,9 +53,11 @@ cc_test(
 
 cc_unit_test_suites_for_host_and_qnx(
     name = "unit_test_suite",
-    cc_unit_tests = [":gptp_shm_machine_test"],
+    cc_unit_tests = [":gptp_engine_test"],
     test_suites_from_sub_packages = [
-        "//score/time_daemon/src/ptp_machine/shm/details:unit_test_suite",
+        "//score/time_slave/src/gptp/details:unit_test_suite",
+        "//score/time_slave/src/gptp/instrument:unit_test_suite",
+        "//score/time_slave/src/gptp/record:unit_test_suite",
     ],
-    visibility = ["//score/time_daemon:__subpackages__"],
+    visibility = ["//score:__subpackages__"],
 )
