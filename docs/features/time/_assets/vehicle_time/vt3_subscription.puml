@@ -1,6 +1,6 @@
 @startuml vt3_subscription
 
-title VT3 — VehicleTime: Async PTP Event Subscription
+title VT3 — VehicleTime: Async PTP Protocol Data Subscription
 
 skinparam backgroundColor white
 hide footbox
@@ -43,10 +43,6 @@ app -> clock : Subscribe<TimeSlaveSyncData<VehicleTime>>(cb)
 activate clock
 clock -> backend : SetTimeSlaveSyncDataReceivedCallback(cb)
 activate backend
-backend -> td : register sync data listener
-activate td
-td --> backend
-deactivate td
 backend --> clock
 deactivate backend
 clock --> app
@@ -56,10 +52,6 @@ app -> clock : Subscribe<PDelayMeasurementData<VehicleTime>>(cb)
 activate clock
 clock -> backend : SetPDelayMeasurementFinishedCallback(cb)
 activate backend
-backend -> td : register pdelay listener
-activate td
-td --> backend
-deactivate td
 backend --> clock
 deactivate backend
 clock --> app
@@ -75,16 +67,18 @@ note right of ts
 end note
 ts -> td : TimeSlaveSyncData\n{offset, rate, timestamps}
 activate td
-td -> backend : fire sync callback
+td -> backend : TimeSlaveSyncData
 activate backend
+deactivate td
+deactivate ts
 backend -> app : cb(TimeSlaveSyncData<VehicleTime>)
-note right of backend
+activate app
+note right of app
     called on backend thread —
     callback must be thread-safe
 end note
+deactivate app
 deactivate backend
-deactivate td
-deactivate ts
 
 == Event: Peer-delay measurement (called on backend thread) ==
 
@@ -92,12 +86,18 @@ ts -> ts : Pdelay_Req / Pdelay_Resp\nexchange with peer
 activate ts
 ts -> td : PDelayMeasurementData\n{peer_delay, timestamps}
 activate td
-td -> backend : fire pdelay callback
+td -> backend : PDelayMeasurementData
 activate backend
-backend -> app : cb(PDelayMeasurementData<VehicleTime>)
-deactivate backend
 deactivate td
 deactivate ts
+backend -> app : cb(PDelayMeasurementData<VehicleTime>)
+activate app
+note right of app
+    called on backend thread —
+    callback must be thread-safe
+end note
+deactivate app
+deactivate backend
 
 == Unsubscribe when no longer needed ==
 
@@ -105,10 +105,6 @@ app -> clock : Unsubscribe<TimeSlaveSyncData<VehicleTime>>()
 activate clock
 clock -> backend : UnsetTimeSlaveSyncDataReceivedCallback()
 activate backend
-backend -> td : deregister sync data listener
-activate td
-td --> backend
-deactivate td
 backend --> clock
 deactivate backend
 clock --> app
@@ -118,10 +114,6 @@ app -> clock : Unsubscribe<PDelayMeasurementData<VehicleTime>>()
 activate clock
 clock -> backend : UnsetPDelayMeasurementFinishedCallback()
 activate backend
-backend -> td : deregister pdelay listener
-activate td
-td --> backend
-deactivate td
 backend --> clock
 deactivate backend
 clock --> app

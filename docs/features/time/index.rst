@@ -8,18 +8,17 @@ score::time — Unified Clock Interface
 Overview
 --------
 
-``score::time`` provides a **unified, clock-domain-agnostic API** for reading time snapshots,
-subscribing to PTP protocol events, and checking clock readiness — all through a single
-template wrapper ``Clock<Tag>``.
+``score::time`` provides a **unified, clock-domain-agnostic API** for reading time
+snapshots, checking clock readiness, and subscribing to clock synchronization events —
+all through a single template wrapper ``Clock<Tag>``.
 
-The design separates three concerns:
+The design separates two concerns:
 
-1. **What kind of time** — expressed as a *tag struct* (``VehicleTime``, ``HighResSteadyTime``,
-   ``std::chrono::steady_clock``, ``std::chrono::system_clock``).
-2. **How to access it** — always via ``Clock<Tag>::GetInstance()``; never via a factory class.
-3. **How to use it in testing** — via ``test_utils::ScopedClockOverride<Tag>`` (scope-bound global
-   override when the SUT calls ``GetInstance()`` internally) or
-   ``test_utils::ClockTestFactory<Tag>`` (direct constructor injection, no global state).
+1. **What kind of time** — expressed as a *tag struct* (``VehicleTime``,
+   ``HighResSteadyTime``, ``std::chrono::steady_clock``,
+   ``std::chrono::system_clock``).
+2. **How to access it** — always via ``Clock<Tag>::GetInstance()``; clock-domain
+   selection is a compile-time decision, enforced by the type system.
 
 Clock domains
 ~~~~~~~~~~~~~
@@ -33,10 +32,10 @@ Clock domains
      - Status concept
    * - ``VehicleClock``
      - ``VehicleTime``
-     - ``VehicleTimeStatus`` (PTP sync flags + rate deviation)
+     - ``VehicleTimeStatus``
    * - ``HighResSteadyClock``
      - ``HighResSteadyTime``
-     - ``NoStatus`` (always-ready local steady clock)
+     - ``NoStatus``
    * - ``SteadyClock``
      - ``std::chrono::steady_clock``
      - ``NoStatus``
@@ -44,22 +43,48 @@ Clock domains
      - ``std::chrono::system_clock``
      - ``NoStatus``
 
-Relation to automotive time synchronization standards
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+VehicleTime
+^^^^^^^^^^^
 
-``score::time`` addresses the same problem domain as the time-base management modules
-found in automotive middleware stacks: reading a time snapshot, inspecting
-synchronization quality flags, waiting for clock availability, and subscribing to
-PTP protocol events.
+``VehicleTime`` is a PTP-synchronized timebase driven by the network Grand Master clock.
+Each ``Now()`` call returns a ``ClockSnapshot`` that bundles the timepoint with a
+``VehicleTimeStatus`` — a set of quality flags (``kSynchronized``, ``kTimeOut``,
+``kTimeLeapFuture``, ``kTimeLeapPast``) and a rate-deviation measurement.  The flags let
+callers decide whether the time value is reliable enough for their use case without
+making a separate status call.
 
-The key design upgrade ``score::time`` brings over typical C-style automotive APIs is
-replacing the **runtime integer time-base selector** with a **compile-time ``Tag``
-template parameter**.  This gives full type-safety and zero runtime dispatch for
-time-domain selection: a component that depends on ``Clock<HighResSteadyTime>`` simply cannot
-accidentally read ``VehicleTime`` at runtime — the compiler enforces the distinction.
-All other structural concepts (composite snapshot result, quality status flags, layered
-backend hiding) follow the same principles as established automotive time
-synchronization practice, expressed in modern C++.
+Because ``VehicleTime`` depends on an IPC channel to the
+:doc:`TimeDaemon <../time_daemon/index>`, it requires an explicit ``Init()`` call before
+``Now()`` returns synchronized data.  Readiness can be probed non-blocking via
+``IsAvailable()`` or waited for with ``WaitUntilAvailable()``.  Callers can also
+subscribe to synchronization events (status changes, sync messages, peer-delay
+measurements) via ``Clock<VehicleTime>::Subscribe<E>()``.
+
+HighResSteadyTime
+^^^^^^^^^^^^^^^^^
+
+``HighResSteadyTime`` is a monotonic, nanosecond-resolution clock optimized for
+low-overhead timing.  On QNX the backend reads the hardware cycle counter directly via
+``ClockCycles()`` — no kernel call, no scheduler interaction.  On Linux it delegates to
+``std::chrono::high_resolution_clock``.  It carries ``NoStatus`` and is always ready: no
+``Init()`` is needed and ``IsAvailable()`` / ``WaitUntilAvailable()`` are not available
+(calling them is a compile error).  Use it for tight timing loops and deadline checks
+where call overhead matters.
+
+SteadyClock
+^^^^^^^^^^^
+
+``SteadyClock`` wraps ``std::chrono::steady_clock`` (POSIX ``CLOCK_MONOTONIC``).  It is
+monotonic and never goes backward, making it the standard choice for measuring elapsed
+time and computing timeouts.  It carries ``NoStatus`` and requires no initialization.
+
+SystemClock
+^^^^^^^^^^^
+
+``SystemClock`` wraps ``std::chrono::system_clock`` (POSIX ``CLOCK_REALTIME``).  It
+represents wall-clock (UTC-based) time and may be adjusted or jump forward or backward.
+It carries ``NoStatus`` and requires no initialization.  Use it when a calendar
+timestamp is needed — not for measuring elapsed time or computing timeouts.
 
 Architecture
 ------------
@@ -104,6 +129,55 @@ Class overview
 
    </div>
 
+Core types
+~~~~~~~~~~
+
+``Clock<Tag>``
+^^^^^^^^^^^^^^
+
+The sole user-facing handle for a clock domain.  A cheaply copyable value type — all
+copies share the same backend instance via a ``shared_ptr``.  Its API surface is
+intentionally uniform across all domains: ``Now()`` for reading, ``Subscribe`` /
+``Unsubscribe`` for events, ``Init`` / ``IsAvailable`` / ``WaitUntilAvailable`` for
+readiness — with opt-in capabilities gated at compile time by the hook templates below.
+
+``ClockTraits<Tag>``
+^^^^^^^^^^^^^^^^^^^^
+
+The domain registration point.  The primary template is intentionally incomplete; each
+clock domain provides a full explicit specialisation that binds together the backend
+type, duration, timepoint, snapshot, and the ``CallNow`` factory function.  No existing
+file is modified when a new domain is added.
+
+``ClockSnapshot<TimepointT, StatusT>``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The immutable return value of every ``Now()`` call.  Bundles the timepoint and its
+quality metadata into a single atomic read — no separate status call is ever needed.
+``TimepointT`` is ``std::chrono::time_point<Tag, Duration>``, making different clock
+domains' timepoints incompatible types so cross-domain arithmetic is a compile error.
+``StatusT`` is the domain's chosen metadata type (see below).
+
+``StatusT``, ``ClockStatus<FlagEnumT>``, and ``NoStatus``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All domain-specific metadata lives in ``StatusT`` — ``ClockSnapshot`` itself is never
+extended.  Two building blocks are provided: ``NoStatus`` (zero-size placeholder for
+always-ready clocks with no quality concept) and ``ClockStatus<FlagEnumT>`` (generic
+bitmask over a scoped flag enum).  A domain may use either alone or compose them inside
+a richer struct alongside continuous fields — as ``VehicleTimeStatus`` does with
+``ClockStatus<VehicleTime::StatusFlag>`` and ``double rate_deviation``.
+
+Capability hooks
+^^^^^^^^^^^^^^^^
+
+Three SFINAE hook templates gate the optional capabilities of ``Clock<Tag>``.  Each
+primary template is intentionally undefined — using an ungated capability on a domain
+that has not opted in is a **compile error**, not a runtime failure:
+``InitializationHook<Tag>`` unlocks ``Init()``, ``AvailabilityHook<Tag>`` unlocks
+``IsAvailable()`` and ``WaitUntilAvailable()``, and ``SubscriptionHook<Tag, EventType>``
+unlocks ``Subscribe`` / ``Unsubscribe`` for a specific event type.
+
 Use Cases
 ---------
 
@@ -114,8 +188,8 @@ VT1 — Time polling with status check
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Obtain a snapshot and inspect the synchronization quality before using the time value.
-VehicleTime wraps a PTP-synchronized timebase and always reports a ``VehicleTimeStatus``
-alongside the timepoint.
+``Now()`` returns a single immutable ``ClockSnapshot`` — the timepoint and its
+``VehicleTimeStatus`` are always fetched together, with no separate status call needed.
 
 .. raw:: html
 
@@ -246,24 +320,23 @@ when ``Init()`` is retried on a background thread.
    Calling them on ``HighResSteadyTime``, ``SteadyClock``, or ``SystemClock`` is a **compile
    error** — those clocks are always ready.
 
-VT3 — Async PTP event subscription
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VT3 — Async PTP protocol data subscription
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``VehicleTime`` delivers two kinds of PTP protocol events via callbacks:
+``VehicleTime`` exposes two PTP protocol data callbacks, intended primarily for
+diagnostics and PTP data sanity checks:
 
-- ``TimeSlaveSyncData<VehicleTime>`` — fired on each PTP sync message.
-- ``PDelayMeasurementData<VehicleTime>`` — fired when a peer-delay measurement completes.
-- ``VehicleTimeStatus`` — fired when the synchronization status flags change (e.g. clock
-  becomes synchronized, or a timeout occurs).  The callback fires unconditionally on the
-  first event after registration, then only when the flags differ from the last fired value.
-  Rate deviation is excluded from the comparison.
+- ``TimeSlaveSyncData<VehicleTime>`` — fired on each PTP Sync/Follow_Up message pair;
+  carries the offset, rate correction, and raw timestamps computed by the TimeSlave.
+- ``PDelayMeasurementData<VehicleTime>`` — fired when a peer-delay measurement cycle
+  completes; carries the measured peer delay and associated timestamps.
 
 .. raw:: html
 
    <div style="overflow-x: auto; max-width: 100%;">
 
 .. uml:: _assets/vehicle_time/vt3_subscription.puml
-   :alt: VT3 — Async PTP event subscription
+   :alt: VT3 — Async PTP protocol data subscription
 
 .. raw:: html
 
@@ -271,10 +344,10 @@ VT3 — Async PTP event subscription
 
 .. warning::
 
-   All three subscription callbacks (``TimeSlaveSyncData``, ``PDelayMeasurementData``,
-   and ``VehicleTimeStatus``) are **not yet delivered**. Calling ``Subscribe<...>()``
-   compiles and runs without error, but the registered callbacks will never be invoked.
-   Delivery will be wired from a dedicated background thread in a future change.
+   Both PTP data callbacks (``TimeSlaveSyncData`` and ``PDelayMeasurementData``) are
+   **not yet delivered**.  Calling ``Subscribe<...>()`` compiles and runs without error,
+   but the registered callbacks will never be invoked.  Delivery will be wired from a
+   dedicated background thread in a future change.
 
 .. code-block:: cpp
 
@@ -291,9 +364,6 @@ VT3 — Async PTP event subscription
 
        clock.Subscribe<score::time::PDelayMeasurementData<score::time::VehicleTime>>(
            [this](const auto& data) { OnPDelayData(data); });
-
-       clock.Subscribe<score::time::VehicleTimeStatus>(
-           [this](const auto& status) { OnStatusChanged(status); });
    }
 
    void MyDiagHandler::Shutdown()
@@ -301,6 +371,70 @@ VT3 — Async PTP event subscription
        auto clock = score::time::VehicleClock::GetInstance();
        clock.Unsubscribe<score::time::TimeSlaveSyncData<score::time::VehicleTime>>();
        clock.Unsubscribe<score::time::PDelayMeasurementData<score::time::VehicleTime>>();
+   }
+
+.. warning::
+
+   Callbacks are invoked on the **backend thread** — the callback implementation must be
+   thread-safe.
+
+VT4 — Synchronization status subscription
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Subscribe to ``VehicleTimeStatus`` changes to react when the clock synchronization state
+changes — for example, when the timebase becomes synchronized and is ready to use, when a
+timeout occurs, or when a large time leap is applied.  This is the primary mechanism for
+application components to know that ``VehicleTime`` is reliable and may be safely read.
+
+Unlike the PTP protocol data callbacks in VT3, ``VehicleTimeStatus`` carries no protocol
+internals.  It delivers the same status value already available via ``Now().Status()``,
+but pushed proactively on every change rather than polled per call.
+
+The callback fires unconditionally on the first PTP status update received after
+registration, and subsequently only when the flag set changes.  Rate deviation is
+excluded from the comparison.
+
+.. raw:: html
+
+   <div style="overflow-x: auto; max-width: 100%;">
+
+.. uml:: _assets/vehicle_time/vt4_status_subscription.puml
+   :alt: VT4 — Synchronization status subscription
+
+.. raw:: html
+
+   </div>
+
+.. warning::
+
+   The ``VehicleTimeStatus`` callback is **not yet delivered**.  Calling
+   ``Subscribe<VehicleTimeStatus>()`` compiles and runs without error, but the registered
+   callback will never be invoked.  Delivery will be wired from a dedicated background
+   thread in a future change.
+
+.. code-block:: cpp
+
+   #include "score/time/vehicle_time/src/vehicle_clock.h"
+
+   void MyService::WatchClockReadiness()
+   {
+       auto clock = score::time::VehicleClock::GetInstance();
+
+       clock.Subscribe<score::time::VehicleTimeStatus>(
+           [this](const score::time::VehicleTimeStatus& status) {
+               if (status.IsReliable()) {
+                   OnClockReady();
+               } else if (status.HasBeenSynchronized()) {
+                   OnClockDegraded();
+               } else {
+                   OnClockUnavailable();
+               }
+           });
+   }
+
+   void MyService::Shutdown()
+   {
+       auto clock = score::time::VehicleClock::GetInstance();
        clock.Unsubscribe<score::time::VehicleTimeStatus>();
    }
 
@@ -309,19 +443,20 @@ VT3 — Async PTP event subscription
    Callbacks are invoked on the **backend thread** — the callback implementation must be
    thread-safe.
 
-VT4 — Status flag inspection (diagnostics)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VT5 — Status flag inspection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When mapping ``VehicleTime`` status flags to diagnostic bits (e.g. DTC bitmasks), access
-individual flags via ``VehicleTimeStatus::IsFlagActive()`` using the
-``VehicleTime::StatusFlag`` enum.
+When mapping ``VehicleTime`` status to diagnostic outputs such as DTC bitmasks, use
+``IsFlagActive(flag)`` with the ``VehicleTime::StatusFlag`` enum to access individual
+bits.  For the higher-level reliability predicates (``IsReliable()``,
+``HasBeenSynchronized()``), see the status flag table and method descriptions in VT1.
 
 .. raw:: html
 
    <div style="overflow-x: auto; max-width: 100%;">
 
-.. uml:: _assets/vehicle_time/vt4_diagnostics.puml
-   :alt: VT4 — Status flag inspection
+.. uml:: _assets/vehicle_time/vt5_diagnostics.puml
+   :alt: VT5 — Status flag inspection
 
 .. raw:: html
 
@@ -359,11 +494,10 @@ HighResSteadyTime
 HT1 — Time polling
 ^^^^^^^^^^^^^^^^^^^
 
-``HighResSteadyClock`` provides nanosecond-resolution monotonic time with minimal call
-overhead.  On QNX the backend reads the hardware cycle counter directly via
-``ClockCycles()`` and converts to nanoseconds — no kernel call, no scheduler interaction.
-On Linux it calls ``std::chrono::high_resolution_clock::now()``.  It carries ``NoStatus``
-— no initialization or quality check is needed.
+Measure a short code-path latency or compute a tight deadline where call overhead matters.
+``HighResSteadyClock`` avoids a kernel call on QNX by reading the hardware cycle counter
+directly — the same ``Now()`` snapshot pattern used for all clock domains, with no status
+check required.
 
 .. raw:: html
 
@@ -396,12 +530,11 @@ On Linux it calls ``std::chrono::high_resolution_clock::now()``.  It carries ``N
 SteadyClock
 ~~~~~~~~~~~
 
-``SteadyClock`` wraps ``std::chrono::steady_clock`` (POSIX ``CLOCK_MONOTONIC``).  It is
-monotonic and never goes backward, making it ideal for measuring elapsed time.  It carries
-``NoStatus`` and requires no initialization.
-
 ST1 — Time polling
 ^^^^^^^^^^^^^^^^^^^
+
+Measure elapsed time between two points, or derive a deadline, using a clock that is
+guaranteed never to go backward regardless of external time adjustments.
 
 .. raw:: html
 
@@ -431,14 +564,12 @@ ST1 — Time polling
 SystemClock
 ~~~~~~~~~~~
 
-``SystemClock`` wraps ``std::chrono::system_clock`` (POSIX ``CLOCK_REALTIME``).  It
-represents wall-clock time (UTC-based) and may jump forward or backward on NTP
-adjustments or manual time changes.  It carries ``NoStatus`` and requires no
-initialization.  Use it when you need a calendar timestamp — not for measuring elapsed
-time.
-
 SC1 — Time polling
 ^^^^^^^^^^^^^^^^^^^
+
+Record a wall-clock timestamp for logging or audit trails where the absolute calendar
+time matters.  Do not use ``SystemClock`` for elapsed time or timeouts — the timepoint
+may jump.
 
 .. raw:: html
 
@@ -577,12 +708,14 @@ Choose the target that matches your use case:
      - Production binary — includes real PTP backend
    * - ``//score/time/vehicle_time:vehicle_time_mock``
      - Unit test — ``VehicleClockBackendMock`` + scope-bound override or constructor injection
-   * - *(Bazel tag required for ScopedClockOverride)*
-     - Tests using ``ScopedClockOverride`` must add ``tags = ["exclusive", "unit"]`` to their
-       ``cc_test`` target. Tests using ``ClockTestFactory`` (constructor injection) do not need
-       this tag.
+   * - ``//score/time/clock:clock_test_utils``
+     - Test utilities — ``ScopedClockOverride`` and ``ClockTestFactory`` (``testonly``;
+       must not appear in production deps).  Tests using ``ScopedClockOverride`` must
+       also add ``tags = ["exclusive", "unit"]`` to their ``cc_test`` target; tests
+       using ``ClockTestFactory`` (constructor injection) do not need this tag.
    * - ``//score/time/vehicle_time:interface``
-     - Header-only, no backend — interface/type usage only
+     - Header-only, no backend — interface/type usage only; required when subscribing
+       to ``VehicleTimeStatus`` (provides the type definition)
    * - ``//score/time/high_res_steady_time:high_res_steady_time``
      - Production binary — HIRS steady clock
    * - ``//score/time/high_res_steady_time:high_res_steady_time_mock``
@@ -595,8 +728,6 @@ Choose the target that matches your use case:
      - ``std::chrono::system_clock`` wrapper
    * - ``//score/time/ptp:ptp_types``
      - PTP notification data types (``TimeSlaveSyncData``, ``PDelayMeasurementData``)
-   * - ``//score/time/vehicle_time:interface``
-     - Required when subscribing to ``VehicleTimeStatus`` — provides the type definition
 
 Design decisions
 ----------------
@@ -609,6 +740,22 @@ configure before reading time (e.g. ``TimeBaseManager tm; tm.GetCurrentTime(kVeh
 ``score::time`` removes that level of indirection: ``Clock<Tag>::GetInstance()`` is the
 sole entry point, and the production backend is chosen at **link time** by the Bazel
 alias target.
+
+Compile-time domain selection over runtime integer selector
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``score::time`` addresses the same problem domain as time-base management modules found
+in automotive middleware stacks: reading a time snapshot, inspecting synchronization
+quality flags, waiting for clock availability, and subscribing to synchronization events.
+
+The key design upgrade over typical C-style automotive APIs is replacing the **runtime
+integer time-base selector** with a **compile-time ``Tag`` template parameter**.  This
+gives full type-safety and zero runtime dispatch for time-domain selection: a component
+that depends on ``Clock<HighResSteadyTime>`` simply cannot accidentally read
+``VehicleTime`` at runtime — the compiler enforces the distinction.  All other
+structural concepts (composite snapshot result, quality status flags, layered backend
+hiding) follow the same principles as established automotive time synchronization
+practice, expressed in modern C++.
 
 Opacity of ``details/``
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -659,7 +806,10 @@ Extending with a new clock domain
 Adding a new time domain (e.g. ``SdatTime``) requires only new files — no existing file
 is modified:
 
-1. Create ``score/time/sdat_time/sdat_time.h`` — tag struct with ``Duration`` and ``Timepoint``.
+1. Create ``score/time/sdat_time/sdat_time.h`` — tag struct with ``Duration`` and
+   ``Timepoint``, and a domain-specific ``SdatTimeStatus`` struct containing whatever
+   metadata the backend needs to expose (flags via ``ClockStatus<FlagEnumT>``, continuous
+   fields, or both).
 2. Create ``score/time/sdat_time/details/sdat_time_iface.h`` — pure-virtual backend interface.
 3. Create ``score/time/sdat_time/details/sdat_prod_impl.cpp`` — production backend.
 4. Add ``ClockTraits<SdatTime>`` specialisation in ``score/time/sdat_time/sdat_clock.h``.

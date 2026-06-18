@@ -19,6 +19,7 @@ class "Clock<Tag>" as clock #LightGreen {
     + Now() : Snapshot
     + Subscribe<EventType>(cb) : void
     + Unsubscribe<EventType>() : void
+    + Init() : bool  [VehicleTime only]
     + IsAvailable() : bool  [VehicleTime only]
     + WaitUntilAvailable(token, until) : bool  [VehicleTime only]
     --
@@ -105,6 +106,8 @@ abstract class "VehicleClockBackend" as viface #LightCoral {
     + {abstract} UnsetTimeSlaveSyncDataReceivedCallback()
     + {abstract} SetPDelayMeasurementFinishedCallback(cb)
     + {abstract} UnsetPDelayMeasurementFinishedCallback()
+    + {abstract} SetStatusChangedCallback(cb)
+    + {abstract} UnsetStatusChangedCallback()
 }
 
 abstract class "HighResSteadyClockBackend" as hiface #LightCoral {
@@ -112,16 +115,11 @@ abstract class "HighResSteadyClockBackend" as hiface #LightCoral {
 }
 
 class "VehicleClockMock" as vmock #LightCoral {
-    MOCK_METHOD: Now, IsAvailable,
-    WaitUntilAvailable,
-    SetTimeSlaveSyncDataReceivedCallback,
-    UnsetTimeSlaveSyncDataReceivedCallback,
-    SetPDelayMeasurementFinishedCallback,
-    UnsetPDelayMeasurementFinishedCallback
+    GMock implementation of\nVehicleClockBackend
 }
 
 class "HighResSteadyClockBackendMock" as hmock #LightCoral {
-    MOCK_METHOD: Now
+    GMock implementation of\nHighResSteadyClockBackend
 }
 
 ' --- Relationships ---
