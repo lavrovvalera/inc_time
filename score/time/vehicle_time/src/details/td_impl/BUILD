@@ -43,7 +43,10 @@ cc_test(
         "//score/time/vehicle_time/src/details:logging_contexts",  # internal header
     ],
     features = COMPILER_WARNING_FEATURES,
-    tags = ["unit"],
+    tags = [
+        "exclusive",
+        "unit",
+    ],
     deps = [
         "//score/time/high_res_steady_time:high_res_steady_time_mock",
         "//score/time/vehicle_time/src:vehicle_clock",

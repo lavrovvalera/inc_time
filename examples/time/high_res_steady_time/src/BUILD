@@ -41,6 +41,10 @@ cc_test(
     name = "high_res_steady_time_handler_test",
     srcs = ["high_res_steady_time_handler_test.cpp"],
     features = COMPILER_WARNING_FEATURES,
+    tags = [
+        "exclusive",
+        "unit",
+    ],
     deps = [
         ":time_handler",
         "//score/time/high_res_steady_time:high_res_steady_time_mock",

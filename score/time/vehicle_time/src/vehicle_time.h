@@ -47,6 +47,7 @@ struct VehicleTime
     {
         kTimeOut        = 0U, /*!< TB was not synchronized within a certain time frame. */
         kSynchronized   = 1U, /*!< The TB was synchronized at least once. */
+        // 2U — reserved
         kTimeLeapFuture = 3U, /*!< An adjustment greater than a certain threshold has been made. */
         kTimeLeapPast   = 4U, /*!< An adjustment back in time greater than a certain threshold has been made. */
     };

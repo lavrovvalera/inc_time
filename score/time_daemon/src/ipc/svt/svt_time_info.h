@@ -27,6 +27,13 @@ namespace td
 namespace svt
 {
 
+// NOTE: TimeBaseStatus, SyncFupSnapshot, and PDelayDataSnapshot intentionally
+// mirror the fields of PtpStatus, SyncFupData, and PDelayData from ptp_time_info.h.
+// The duplication is deliberate: ptp_time_info.h is the internal processing-domain
+// type; svt_time_info.h is the IPC serialisation type. Keeping them separate avoids
+// coupling the processing domain to the IPC layer's memory layout and allows each
+// to evolve independently.
+
 /**
  * \brief POD struct to hold PTP Status content
  * Until the field is public, the following values are considered:

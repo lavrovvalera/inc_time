@@ -138,7 +138,7 @@ class Clock
     ///
     /// @return @c true if the backend is ready; @c false on failure.
     template <typename T = Tag, std::enable_if_t<HasInitialization<T>::value, bool> = true>
-    bool Init() noexcept
+    [[nodiscard]] bool Init() noexcept
     {
         return InitializationHook<T>::CallInit(*impl_);
     }

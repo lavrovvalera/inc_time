@@ -64,6 +64,10 @@ cc_test(
     name = "vehicle_clock_test",
     srcs = ["vehicle_clock_test.cpp"],
     features = COMPILER_WARNING_FEATURES,
+    tags = [
+        "exclusive",
+        "unit",
+    ],
     deps = [
         ":vehicle_clock_mock",
         "//score/time/clock:clock_test_utils",

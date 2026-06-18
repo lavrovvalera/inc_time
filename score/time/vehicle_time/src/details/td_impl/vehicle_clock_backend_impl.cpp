@@ -117,6 +117,8 @@ bool VehicleClockBackendImpl::WaitUntilAvailable(
         {
             return true;
         }
+        // Poll at 10 ms intervals: coarse enough to avoid busy-spinning, fine enough
+        // to detect IPC readiness well within any realistic startup deadline.
         std::this_thread::sleep_for(std::chrono::milliseconds{10});
         should_poll = (!token.stop_requested()) && (std::chrono::steady_clock::now() <= until);
     } while (should_poll);
@@ -129,34 +131,34 @@ bool VehicleClockBackendImpl::WaitUntilAvailable(
 void VehicleClockBackendImpl::SetTimeSlaveSyncDataReceivedCallback(
     VehicleTime::TimeSlaveSyncDataReceivedCallback&& /*callback*/) noexcept
 {
-    // Not yet supported by the TimeDaemon IPC subscription layer.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 void VehicleClockBackendImpl::UnsetTimeSlaveSyncDataReceivedCallback() noexcept
 {
-    // Not yet supported.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 void VehicleClockBackendImpl::SetPDelayMeasurementFinishedCallback(
     VehicleTime::PDelayMeasurementFinishedCallback&& /*callback*/) noexcept
 {
-    // Not yet supported.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 void VehicleClockBackendImpl::UnsetPDelayMeasurementFinishedCallback() noexcept
 {
-    // Not yet supported.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 void VehicleClockBackendImpl::SetStatusChangedCallback(
     VehicleTime::StatusChangedCallback&& /*callback*/) noexcept
 {
-    // Not yet supported — will be invoked from a dedicated background thread in a future change.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 void VehicleClockBackendImpl::UnsetStatusChangedCallback() noexcept
 {
-    // Not yet supported.
+    // TODO(https://github.com/eclipse-score/inc_time/issues/59): implement callback delivery.
 }
 
 ClockStatus<VehicleTime::StatusFlag> VehicleClockBackendImpl::ConvertPtpStatus(

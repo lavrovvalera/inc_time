@@ -68,7 +68,7 @@ class ClockStatus final
     /// @brief Returns @c true if the given flag bit-position is set in this status.
     ///
     /// @param flag  The bit-position to test.
-    bool IsFlagActive(const FlagEnumT flag) const noexcept
+    [[nodiscard]] bool IsFlagActive(const FlagEnumT flag) const noexcept
     {
         const PositionT flag_position{static_cast<PositionT>(flag)};
         SCORE_LANGUAGE_FUTURECPP_ASSERT_PRD_MESSAGE(
@@ -80,7 +80,7 @@ class ClockStatus final
     /// @brief Returns @c true if any of the given flag bit-positions is set in this status.
     ///
     /// @param flag_list  The bit-positions to test.
-    bool IsAnyOfFlagsActive(const std::initializer_list<FlagEnumT>& flag_list) const noexcept
+    [[nodiscard]] bool IsAnyOfFlagsActive(const std::initializer_list<FlagEnumT>& flag_list) const noexcept
     {
         bool is_any_flag_set{false};
         for (const auto flag : flag_list)
@@ -96,7 +96,21 @@ class ClockStatus final
 
     /// @brief Formats all active flags into an @c ostringstream for diagnostics.
     ///
-    /// @note Requires a template specialization for the concrete @c FlagEnumT.
+    /// This is a hook for domain implementors. There is **no base-template body** —
+    /// each concrete @c FlagEnumT must provide an explicit full specialization, e.g.:
+    ///
+    /// @code{.cpp}
+    /// template <>
+    /// std::ostringstream ClockStatus<MyDomain::StatusFlag>::PrintTo() const
+    /// {
+    ///     std::ostringstream oss;
+    ///     oss << (IsFlagActive(MyDomain::StatusFlag::kFoo) ? "kFoo " : "");
+    ///     return oss;
+    /// }
+    /// @endcode
+    ///
+    /// @note Coverage of this method lives in the domain-level test (e.g.
+    ///       @c vehicle_time_status_test.cpp), not in this file.
     std::ostringstream PrintTo() const;
 
     /// @brief Adds a flag bit-position to this status.

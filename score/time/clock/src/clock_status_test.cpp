@@ -101,7 +101,7 @@ TEST_F(TestClockStatus, StatusSerializedCorrectlyToFlagsContainer)
     EXPECT_FALSE(deserialized.IsAnyOfFlagsActive({StatusFlag::kSynchronized, StatusFlag::kUnknown}));
 
     ClockStatus<StatusFlag> all_set{};
-    all_set.FromUnderlying(std::numeric_limits<std::uint8_t>::max());
+    all_set.FromUnderlying(std::numeric_limits<std::uint32_t>::max());
 
     EXPECT_TRUE(all_set.IsFlagActive(StatusFlag::kSynchToGateway));
     EXPECT_TRUE(all_set.IsFlagActive(StatusFlag::kTimeOut));
@@ -148,7 +148,7 @@ TEST_F(TestClockStatus, OutOfRangeFlagAborts)
     status.AddFlag(StatusFlagOutOfRange::kTimeOut);
     EXPECT_TRUE(status.IsFlagActive(StatusFlagOutOfRange::kTimeOut));
 
-    ASSERT_DEATH(status.IsFlagActive(StatusFlagOutOfRange::kUnknown), "");
+    ASSERT_DEATH(static_cast<void>(status.IsFlagActive(StatusFlagOutOfRange::kUnknown)), "");
 }
 
 }  // namespace time

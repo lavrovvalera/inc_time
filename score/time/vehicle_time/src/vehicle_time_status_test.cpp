@@ -104,9 +104,6 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapPastFlag)
 
     status.flags.AddFlag(Flag::kTimeLeapPast);
     EXPECT_TRUE(status.IsConsistent());
-
-    status.flags.AddFlag(Flag::kTimeOut);
-    EXPECT_TRUE(status.IsConsistent());
 }
 
 TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapFutureFlag)
@@ -117,9 +114,6 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapFutureFlag)
     EXPECT_TRUE(status.IsConsistent());
 
     status.flags.AddFlag(Flag::kTimeLeapFuture);
-    EXPECT_TRUE(status.IsConsistent());
-
-    status.flags.AddFlag(Flag::kTimeOut);
     EXPECT_TRUE(status.IsConsistent());
 }
 

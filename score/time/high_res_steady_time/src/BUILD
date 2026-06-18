@@ -74,6 +74,10 @@ cc_test(
     name = "high_res_steady_clock_test",
     srcs = ["high_res_steady_clock_test.cpp"],
     features = COMPILER_WARNING_FEATURES,
+    tags = [
+        "exclusive",
+        "unit",
+    ],
     deps = [
         ":high_res_steady_clock_mock",
         "//score/time/clock:clock_test_utils",

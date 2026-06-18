@@ -269,6 +269,13 @@ VT3 — Async PTP event subscription
 
    </div>
 
+.. warning::
+
+   All three subscription callbacks (``TimeSlaveSyncData``, ``PDelayMeasurementData``,
+   and ``VehicleTimeStatus``) are **not yet delivered**. Calling ``Subscribe<...>()``
+   compiles and runs without error, but the registered callbacks will never be invoked.
+   Delivery will be wired from a dedicated background thread in a future change.
+
 .. code-block:: cpp
 
    #include "score/time/vehicle_time/src/vehicle_clock.h"
@@ -301,12 +308,6 @@ VT3 — Async PTP event subscription
 
    Callbacks are invoked on the **backend thread** — the callback implementation must be
    thread-safe.
-
-.. note::
-
-   ``VehicleTimeStatus`` subscription is defined in the API and can be registered now.
-   The actual delivery is not yet implemented — callbacks will be invoked from a dedicated
-   background thread in a future change.
 
 VT4 — Status flag inspection (diagnostics)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -494,6 +495,26 @@ T1 — ScopedClockOverride (scope-bound override)
 
    </div>
 
+.. warning::
+
+   ``ScopedClockOverride`` modifies a **process-wide singleton**. Any ``cc_test`` target that
+   uses it must declare ``tags = ["exclusive", "unit"]`` in its Bazel BUILD file. Without
+   ``"exclusive"``, Bazel may run multiple tests in the same process shard in parallel, causing
+   one test's mock to corrupt another test's clock state and producing flaky failures.
+
+   .. code-block:: python
+
+      cc_test(
+          name = "my_service_test",
+          srcs = ["my_service_test.cpp"],
+          tags = ["exclusive", "unit"],
+          deps = [...],
+      )
+
+   If the SUT receives the clock via constructor injection instead, use
+   ``ClockTestFactory`` (T2) — it does **not** touch the global singleton and
+   requires no special tag.
+
 .. code-block:: cpp
 
    #include "score/time/vehicle_time/src/vehicle_clock.h"
@@ -556,6 +577,10 @@ Choose the target that matches your use case:
      - Production binary — includes real PTP backend
    * - ``//score/time/vehicle_time:vehicle_time_mock``
      - Unit test — ``VehicleClockBackendMock`` + scope-bound override or constructor injection
+   * - *(Bazel tag required for ScopedClockOverride)*
+     - Tests using ``ScopedClockOverride`` must add ``tags = ["exclusive", "unit"]`` to their
+       ``cc_test`` target. Tests using ``ClockTestFactory`` (constructor injection) do not need
+       this tag.
    * - ``//score/time/vehicle_time:interface``
      - Header-only, no backend — interface/type usage only
    * - ``//score/time/high_res_steady_time:high_res_steady_time``

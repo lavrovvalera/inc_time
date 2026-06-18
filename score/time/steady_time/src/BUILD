@@ -59,6 +59,10 @@ cc_test(
     name = "steady_clock_test",
     srcs = ["steady_clock_test.cpp"],
     features = COMPILER_WARNING_FEATURES,
+    tags = [
+        "exclusive",
+        "unit",
+    ],
     deps = [
         ":steady_clock_mock",
         "//score/time/clock:clock_test_utils",
