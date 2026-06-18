@@ -47,10 +47,8 @@ struct VehicleTime
     {
         kTimeOut        = 0U, /*!< TB was not synchronized within a certain time frame. */
         kSynchronized   = 1U, /*!< The TB was synchronized at least once. */
-        kSynchToGateway = 2U, /*!< The TB is in sync with the gateway. */
         kTimeLeapFuture = 3U, /*!< An adjustment greater than a certain threshold has been made. */
         kTimeLeapPast   = 4U, /*!< An adjustment back in time greater than a certain threshold has been made. */
-        kUnknown        = 7U  /*!< Unknown status. */
     };
 
     using Duration  = std::chrono::nanoseconds;
@@ -107,17 +105,11 @@ struct VehicleTimeStatus
 
     /// \brief Returns true if the vehicle time status flags are internally consistent (no contradictory combination).
     ///
-    /// Consistent := kUnknown is NOT set, at least one non-kUnknown flag is set,
-    ///               and kTimeLeapFuture and kTimeLeapPast are not both set simultaneously.
+    /// Consistent := at least one flag is set AND kTimeLeapFuture and kTimeLeapPast are not both set simultaneously.
     bool IsConsistent() const noexcept
     {
-        if (flags.IsFlagActive(VehicleTime::StatusFlag::kUnknown))
-        {
-            return false;
-        }
         if (!flags.IsAnyOfFlagsActive({VehicleTime::StatusFlag::kTimeOut,
                                        VehicleTime::StatusFlag::kSynchronized,
-                                       VehicleTime::StatusFlag::kSynchToGateway,
                                        VehicleTime::StatusFlag::kTimeLeapFuture,
                                        VehicleTime::StatusFlag::kTimeLeapPast}))
         {

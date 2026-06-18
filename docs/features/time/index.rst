@@ -150,7 +150,7 @@ alongside the timepoint.
 
    ``Init()`` must be called once during application startup before ``Now()`` is expected
    to return synchronized data (see VT2).  Without it, ``Now()`` returns a snapshot with
-   ``kUnknown`` status.
+   no flags set (``IsConsistent()`` returns ``false``).
 
 **Status flags:**
 
@@ -159,15 +159,11 @@ alongside the timepoint.
 +===========================+==============================================================+
 | ``kSynchronized``         | Synchronized at least once to the PTP Grand Master           |
 +---------------------------+--------------------------------------------------------------+
-| ``kSynchToGateway``       | Currently in sync with the PTP gateway                       |
-+---------------------------+--------------------------------------------------------------+
 | ``kTimeOut``              | No sync message received within the configured time window   |
 +---------------------------+--------------------------------------------------------------+
 | ``kTimeLeapFuture``       | A large forward adjustment was applied                       |
 +---------------------------+--------------------------------------------------------------+
 | ``kTimeLeapPast``         | A large backward adjustment was applied                      |
-+---------------------------+--------------------------------------------------------------+
-| ``kUnknown``              | Status cannot be determined (e.g. ``Init()`` not yet called) |
 +---------------------------+--------------------------------------------------------------+
 
 ``VehicleTimeStatus::IsReliable()`` returns ``true`` only when ``kSynchronized`` is set
@@ -175,7 +171,7 @@ alongside the timepoint.
 ``VehicleTimeStatus::HasBeenSynchronized()`` returns ``true`` whenever ``kSynchronized``
 has been set at least once during this lifecycle, regardless of current fault flags.
 ``VehicleTimeStatus::IsConsistent()`` checks that the flag combination is internally
-valid (no ``kUnknown``, at least one flag set, not both leap flags simultaneously).
+valid (at least one flag set, and not both leap flags simultaneously).
 
 These three methods belong to ``VehicleTimeStatus`` and encode VehicleTime-domain
 semantics.  ``ClockStatus<FlagEnumT>`` itself exposes only generic bit-manipulation
@@ -187,7 +183,7 @@ VT2 — Initialization and readiness check
 
 ``VehicleTime`` requires an explicit ``Init()`` call to open the IPC channel to the
 :doc:`TimeDaemon <../time_daemon/index>` before any time data becomes available.  Until ``Init()`` returns ``true``,
-``Now()`` returns a snapshot with ``kUnknown`` status and ``IsAvailable()`` returns
+``Now()`` returns a snapshot with no flags set (``IsConsistent()`` returns ``false``) and ``IsAvailable()`` returns
 ``false``.
 
 After a successful ``Init()``, ``IsAvailable()`` returns ``true`` immediately.  The

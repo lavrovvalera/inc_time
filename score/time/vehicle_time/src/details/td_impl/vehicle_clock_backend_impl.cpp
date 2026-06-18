@@ -41,20 +41,19 @@ VehicleClockBackendImpl::VehicleClockBackendImpl(
 ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus>
 VehicleClockBackendImpl::Now() const noexcept
 {
-    const ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> kUnknownSnapshot{
+    const ClockSnapshot<VehicleTime::Timepoint, VehicleTimeStatus> kEmptySnapshot{
         VehicleTime::Timepoint{},
-        VehicleTimeStatus{
-            ClockStatus<VehicleTime::StatusFlag>{{VehicleTime::StatusFlag::kUnknown}}, 0.0}};
+        VehicleTimeStatus{}};
 
     if (!is_ready_)
     {
-        return kUnknownSnapshot;
+        return kEmptySnapshot;
     }
 
     const auto rx_data = svt_receiver_->Receive();
     if (!rx_data.has_value())
     {
-        return kUnknownSnapshot;
+        return kEmptySnapshot;
     }
 
     const auto now_local        = local_clock_.Now().TimePoint().time_since_epoch();
@@ -64,8 +63,8 @@ VehicleClockBackendImpl::Now() const noexcept
     if (now_local < local_at_capture)
     {
         score::mw::log::LogError(kVehicleTimeLogContext)
-            << "Local clock is behind PTP capture reference — returning unknown status.";
-        return kUnknownSnapshot;
+            << "Local clock is behind PTP capture reference — returning empty status.";
+        return kEmptySnapshot;
     }
 
     const VehicleTime::Timepoint adjusted_tp{ptp_at_capture + (now_local - local_at_capture)};
@@ -164,6 +163,10 @@ ClockStatus<VehicleTime::StatusFlag> VehicleClockBackendImpl::ConvertPtpStatus(
     const score::td::svt::TimeBaseStatus& ptp_status) noexcept
 {
     using Flag = VehicleTime::StatusFlag;
+    if (!ptp_status.is_correct)
+    {
+        return ClockStatus<Flag>{};
+    }
     ClockStatus<Flag> status;
     if (ptp_status.is_synchronized)
     {
@@ -180,10 +183,6 @@ ClockStatus<VehicleTime::StatusFlag> VehicleClockBackendImpl::ConvertPtpStatus(
     if (ptp_status.is_time_jump_past)
     {
         status.AddFlag(Flag::kTimeLeapPast);
-    }
-    if (!ptp_status.is_correct)
-    {
-        status.AddFlag(Flag::kUnknown);
     }
     return status;
 }

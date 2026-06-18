@@ -34,9 +34,6 @@ TEST_F(TestVehicleTimeStatus, IsReliableReturnsTrueOnlyWhenFlagSetWithoutErrorFl
     VehicleTimeStatus status{};
     EXPECT_FALSE(status.IsReliable());
 
-    status.flags.AddFlag(Flag::kSynchToGateway);
-    EXPECT_FALSE(status.IsReliable());
-
     status.flags.AddFlag(Flag::kSynchronized);
     EXPECT_TRUE(status.IsReliable());
 
@@ -88,10 +85,10 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsFalseWhenNoFlagsSet)
     EXPECT_FALSE(status.IsConsistent());
 }
 
-TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithSynchToGatewayAndSynchronized)
+TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithSingleFlagSet)
 {
     VehicleTimeStatus status{};
-    status.flags.AddFlag(Flag::kSynchToGateway);
+    status.flags.AddFlag(Flag::kTimeOut);
     EXPECT_TRUE(status.IsConsistent());
 
     status.flags.AddFlag(Flag::kSynchronized);
@@ -101,7 +98,7 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithSynchToGatewayAndSynchr
 TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapPastFlag)
 {
     VehicleTimeStatus status{};
-    status.flags.AddFlag(Flag::kSynchToGateway);
+    status.flags.AddFlag(Flag::kTimeOut);
     status.flags.AddFlag(Flag::kSynchronized);
     EXPECT_TRUE(status.IsConsistent());
 
@@ -115,7 +112,7 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapPastFlag)
 TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapFutureFlag)
 {
     VehicleTimeStatus status{};
-    status.flags.AddFlag(Flag::kSynchToGateway);
+    status.flags.AddFlag(Flag::kTimeOut);
     status.flags.AddFlag(Flag::kSynchronized);
     EXPECT_TRUE(status.IsConsistent());
 
@@ -126,23 +123,10 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsTrueWithLeapFutureFlag)
     EXPECT_TRUE(status.IsConsistent());
 }
 
-TEST_F(TestVehicleTimeStatus, IsConsistentReturnsFalseWhenUnknownFlagSet)
-{
-    VehicleTimeStatus status{};
-    status.flags.AddFlag(Flag::kSynchToGateway);
-    status.flags.AddFlag(Flag::kSynchronized);
-    status.flags.AddFlag(Flag::kTimeLeapPast);
-    status.flags.AddFlag(Flag::kTimeOut);
-    EXPECT_TRUE(status.IsConsistent());
-
-    status.flags.AddFlag(Flag::kUnknown);
-    EXPECT_FALSE(status.IsConsistent());
-}
-
 TEST_F(TestVehicleTimeStatus, IsConsistentReturnsFalseWhenBothLeapFlagsSet)
 {
     VehicleTimeStatus status{};
-    status.flags.AddFlag(Flag::kSynchToGateway);
+    status.flags.AddFlag(Flag::kTimeOut);
     status.flags.AddFlag(Flag::kSynchronized);
     status.flags.AddFlag(Flag::kTimeLeapPast);
     EXPECT_TRUE(status.IsConsistent());
@@ -153,14 +137,14 @@ TEST_F(TestVehicleTimeStatus, IsConsistentReturnsFalseWhenBothLeapFlagsSet)
 
 TEST_F(TestVehicleTimeStatus, PrintToFormatsActiveFlagsCorrectly)
 {
-    ClockStatus<Flag> status{Flag::kSynchToGateway};
+    ClockStatus<Flag> status{Flag::kTimeOut};
 
     std::ostringstream os;
     os << status;
 
     EXPECT_STREQ(
-        "[kTimeOut: false, kSynchronized: false, kSynchToGateway: true, kTimeLeapFuture: false, "
-        "kTimeLeapPast: false, kUnknown: false, ]",
+        "[kTimeOut: true, kSynchronized: false, kTimeLeapFuture: false, "
+        "kTimeLeapPast: false, ]",
         os.str().c_str());
 }
 

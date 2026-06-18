@@ -28,10 +28,8 @@ std::ostringstream ClockStatus<VehicleTime::StatusFlag>::PrintTo() const
     static const std::map<VehicleTime::StatusFlag, std::string> kFlagNames = {
         {VehicleTime::StatusFlag::kTimeOut,        "kTimeOut"},
         {VehicleTime::StatusFlag::kSynchronized,   "kSynchronized"},
-        {VehicleTime::StatusFlag::kSynchToGateway, "kSynchToGateway"},
         {VehicleTime::StatusFlag::kTimeLeapFuture, "kTimeLeapFuture"},
         {VehicleTime::StatusFlag::kTimeLeapPast,   "kTimeLeapPast"},
-        {VehicleTime::StatusFlag::kUnknown,        "kUnknown"},
     };
     std::ostringstream oss;
     oss << "[";
