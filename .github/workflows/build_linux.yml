@@ -19,15 +19,11 @@ on:
     branches:
       - main
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config: [time-x86_64-linux, time-arm64-linux]
+  linux-build:
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4.2.2
-
       - name: Setup Bazel
         uses: bazel-contrib/setup-bazel@0.18.0
         with:
