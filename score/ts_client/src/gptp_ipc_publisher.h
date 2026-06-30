@@ -14,7 +14,9 @@
 #define SCORE_TS_CLIENT_SRC_GPTP_IPC_PUBLISHER_H
 
 #include "score/ts_client/src/gptp_ipc_channel.h"
+#include "score/memory/shared/shared_memory_factory.h"
 
+#include <memory>
 #include <string>
 
 namespace score
@@ -39,19 +41,13 @@ class GptpIpcPublisher final
     GptpIpcPublisher(const GptpIpcPublisher&) = delete;
     GptpIpcPublisher& operator=(const GptpIpcPublisher&) = delete;
 
-    /// Create and map the shared memory segment.
-    /// @return true on success.
-    bool Init(const std::string& ipc_name = kGptpIpcName);
-
-    /// Publish a GptpIpcData snapshot using seqlock.
+    bool Open(const std::string& ipc_name = kGptpIpcName);
     void Publish(const score::ts::GptpIpcData& data);
-
-    /// Unmap and unlink the shared memory segment.
-    void Destroy();
+    void Close();
 
   private:
     GptpIpcRegion* region_{nullptr};
-    int shm_fd_{-1};
+    std::shared_ptr<score::memory::shared::ISharedMemoryResource> shm_resource_;
     std::string ipc_name_;
 };
 

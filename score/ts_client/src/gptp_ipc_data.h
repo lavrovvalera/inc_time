@@ -33,9 +33,6 @@ struct GptpIpcStatus
     bool is_correct;
 };
 
-/**
- * @brief IPC-layer Sync+FollowUp measurement data.
- */
 struct GptpIpcSyncFupData
 {
     std::uint64_t precise_origin_timestamp;
@@ -49,9 +46,6 @@ struct GptpIpcSyncFupData
     std::uint64_t clock_identity;
 };
 
-/**
- * @brief IPC-layer peer-delay measurement data.
- */
 struct GptpIpcPDelayData
 {
     std::uint64_t request_origin_timestamp;
@@ -71,7 +65,7 @@ struct GptpIpcPDelayData
 /**
  * @brief IPC data snapshot written by TimeSlave and read by TimeDaemon.
  *
- * This type is internal to ts_client/src and intentionally decoupled from
+ * This type is internal to ts_client and intentionally decoupled from
  * score::td::PtpTimeInfo.  Callers are responsible for mapping between the two.
  */
 struct GptpIpcData
