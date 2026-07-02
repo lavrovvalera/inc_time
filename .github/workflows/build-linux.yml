@@ -25,9 +25,15 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    types: [checks_requested]
+  workflow_call:
 jobs:
   linux-build:
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        config: [time-x86_64-linux, time-arm64-linux]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.2.2
@@ -41,4 +47,4 @@ jobs:
 
       - name: Build with Bazel
         run: |
-          bazel build --keep_going --verbose_failures --config time-x86_64-linux -- //score/... //examples/...
+          bazel build --keep_going --verbose_failures --config ${{ matrix.config }} -- //score/... //examples/...
